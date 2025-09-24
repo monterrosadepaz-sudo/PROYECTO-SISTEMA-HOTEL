@@ -5,26 +5,27 @@
 @section('contenido')
 <h3 class="mb-3">Registrar Check-Out</h3>
 
-<form class="card shadow p-4">
+<form id="formularioCheckout" method="POST" action="{{ route('checkout.registrar') }}" class="card shadow p-4">
+    @csrf
     <div class="row g-3">
         <div class="col-md-4">
-            <label class="form-label">Cliente</label>
-            <input type="text" class="form-control" placeholder="Nombre del cliente">
+            <label for="nombreClienteCheckout" class="form-label">Cliente</label>
+            <input type="text" id="nombreClienteCheckout" name="nombreClienteCheckout" class="form-control" placeholder="Nombre del cliente">
         </div>
         <div class="col-md-3">
-            <label class="form-label">Habitación</label>
-            <select class="form-select">
+            <label for="numeroHabitacionCheckout" class="form-label">Habitación</label>
+            <select id="numeroHabitacionCheckout" name="numeroHabitacionCheckout" class="form-select">
                 <option>101</option>
                 <option>102</option>
                 <option>103</option>
             </select>
         </div>
         <div class="col-md-3">
-            <label class="form-label">Fecha Salida</label>
-            <input type="date" class="form-control">
+            <label for="fechaSalidaCheckout" class="form-label">Fecha Salida</label>
+            <input type="date" id="fechaSalidaCheckout" name="fechaSalidaCheckout" class="form-control">
         </div>
         <div class="col-md-2 d-grid">
-            <button class="btn btn-dark mt-4">Registrar</button>
+            <button type="submit" id="btnRegistrarCheckout" name="btnRegistrarCheckout" class="btn btn-dark mt-4">Registrar</button>
         </div>
     </div>
 </form>
