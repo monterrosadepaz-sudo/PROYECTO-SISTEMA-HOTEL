@@ -11,10 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('invoices', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+        // La tabla ya existe, así que no la crees de nuevo.
+        // Si necesitas modificar la tabla, usa Schema::table('rol', function (Blueprint $table) { ... });
     }
 
     /**
@@ -22,6 +20,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('invoices');
+        // Si quieres que la migración pueda revertirse, puedes eliminar la tabla:
+        // Schema::dropIfExists('rol');
     }
 };

@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,10 +10,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bookings', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+        // La tabla ya existe, así que no la crees de nuevo.
+        // Si necesitas modificar la tabla, usa Schema::table('habitacion', function (Blueprint $table) { ... });
     }
 
     /**
@@ -22,6 +19,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bookings');
+        // Si quieres que la migración pueda revertirse, puedes eliminar la tabla:
+        // Schema::dropIfExists('habitacion');
     }
 };

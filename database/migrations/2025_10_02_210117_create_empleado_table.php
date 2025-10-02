@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            //
-        });
+        // La tabla ya existe, así que no la crees de nuevo.
+        // Si necesitas modificar la tabla, usa Schema::table('empleado', function (Blueprint $table) { ... });
     }
 
     /**
@@ -21,8 +20,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            //
-        });
+        // Si quieres que la migración pueda revertirse, puedes eliminar la tabla:
+        // Schema::dropIfExists('empleado');
     }
 };
