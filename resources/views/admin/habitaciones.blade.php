@@ -8,7 +8,7 @@
 <div class="card shadow" id="seccionFormularioHabitacion">
     <div class="card-header bg-dark text-white">Nueva Habitación</div>
     <div class="card-body">
-        <form id="formularioHabitacion" class="row g-3" method="POST" action="{{ route('habitaciones.guardar') }}">
+        <form id="formularioHabitacion" class="row g-3" method="POST" action="#">
             @csrf
             <div class="col-md-3">
                 <label for="numeroHabitacion" class="form-label">Número</label>

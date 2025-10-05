@@ -8,7 +8,7 @@
 <div class="card shadow" id="seccionFormularioCliente">
     <div class="card-header bg-dark text-white">Nuevo Cliente</div>
     <div class="card-body">
-        <form id="formularioCliente" class="row g-3" method="POST" action="{{ route('clientes.guardar') }}">
+        <form id="formularioCliente" class="row g-3" method="POST" action="#">
             @csrf
             <div class="col-md-4">
                 <label for="nombreCliente" class="form-label">Nombre</label>

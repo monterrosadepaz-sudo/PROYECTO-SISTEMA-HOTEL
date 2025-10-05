@@ -34,5 +34,21 @@
             <a href="/admin/reportes" id="btnIrReportes" class="btn btn-sm btn-dark">Ir</a>
         </div>
     </div>
+
+
+    <div class="col-md-3">
+        <div class="card shadow text-center p-3" id="cardusuarios">
+            <h5>USUARIOS</h5>
+            <p>Controlando cuantos recepcionistas usan este sistema</p>
+            <a href="/admin/editar_usuario" id="btnIrusuario" class="btn btn-sm btn-dark">Ir</a>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow text-center p-3" id="cardproducto">
+            <h5>PRODUCTO</h5>
+            <p>Controlando los productos del hotel</p>
+            <a href="/admin/editar_producto" id="btnIrusuario" class="btn btn-sm btn-dark">Ir</a>
+        </div>
+    </div>
 </div>
 @endsection

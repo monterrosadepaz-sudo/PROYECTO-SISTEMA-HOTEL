@@ -8,7 +8,7 @@
 <div class="card shadow" id="seccionFormularioReserva">
     <div class="card-header bg-dark text-white">Nueva Reserva</div>
     <div class="card-body">
-        <form id="formularioReserva" method="POST" action="{{ route('reservas.guardar') }}">
+        <form id="formularioReserva" method="POST" action="#">
             @csrf
             <div class="row g-3">
                 <div class="col-md-4">
