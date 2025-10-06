@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\UsuarioController;
 use App\Http\Controllers\Admin\HabitacionesController;
 use App\Http\Controllers\Recepcion\RecepcionHabitacionController;
+use App\Http\Controllers\Admin\ProductoController;
 
 // Página de inicio
 Route::view('/', 'home');
@@ -33,6 +34,15 @@ Route::prefix('admin')->group(function () {
     Route::put('/habitaciones/{idHabitacion}', [HabitacionesController::class, 'update'])->name('habitaciones.update');
     Route::delete('/habitaciones/{idHabitacion}', [HabitacionesController::class, 'destroy'])->name('habitaciones.destroy');
     Route::delete('/habitaciones/{idHabitacion}/eliminar-definitivo', [HabitacionesController::class, 'eliminarDefinitivo'])->name('habitaciones.eliminarDefinitivo');
+
+    //rutas del los productos
+    Route::get('/productos', [ProductoController::class, 'index'])->name('productos.index');
+    Route::post('/productos', [ProductoController::class, 'store'])->name('productos.store');
+    Route::get('/productos/{idProducto}/edit', [ProductoController::class, 'edit'])->name('productos.edit');
+    Route::put('/productos/{idProducto}', [ProductoController::class, 'update'])->name('productos.update');
+    Route::delete('/productos/{idProducto}', [ProductoController::class, 'destroy'])->name('productos.destroy');
+    Route::delete('/productos/{idProducto}/eliminar', [ProductoController::class, 'eliminarDefinitivo'])->name('productos.eliminarDefinitivo');
+    Route::put('/productos/{idProducto}/reactivar', [ProductoController::class, 'reactivar'])->name('productos.reactivar');
 
 });
 
