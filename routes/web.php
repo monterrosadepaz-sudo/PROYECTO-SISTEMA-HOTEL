@@ -2,9 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\UsuarioController;
+use App\Http\Controllers\Admin\HabitacionesController;
+use App\Http\Controllers\Recepcion\RecepcionHabitacionController;
 
 // Página de inicio
-Route::view('/', 'home'); // O 'home' si prefieres
+Route::view('/', 'home');
 
 // Vistas del administrador
 Route::prefix('admin')->group(function () {
@@ -15,25 +17,22 @@ Route::prefix('admin')->group(function () {
     Route::view('/habitaciones', 'admin.habitaciones');
     Route::view('/inventario', 'admin.inventario');
     Route::view('/reportes', 'admin.reportes');
-    Route::view('/editar_usuario', 'admin.editar_usuario');
     Route::view('/editar_producto', 'admin.editar_producto');
 
-
-    //rutas para el pishi  CRUD de usuarios 
- 
-    Route::prefix('admin')->group(function () {
-    // Vista principal de gestión de usuarios
+    // Gestión de usuarios
     Route::get('/usuarios', [UsuarioController::class, 'index'])->name('usuarios.index');
-
-    // Crear nuevo usuario
-    Route::post('/usuarios', [UsuarioController::class, 'store'])->name('usuarios.store');
-
-    // Actualizar usuario existente
+    Route::get('/usuarios/{id}/edit', [UsuarioController::class, 'edit'])->name('usuarios.edit');
     Route::put('/usuarios/{id}', [UsuarioController::class, 'update'])->name('usuarios.update');
-
-    // Eliminar usuario
+    Route::post('/usuarios', [UsuarioController::class, 'store'])->name('usuarios.store');
     Route::delete('/usuarios/{id}', [UsuarioController::class, 'destroy'])->name('usuarios.destroy');
-});
+
+    // Gestión de habitaciones
+    Route::get('/habitaciones', [HabitacionesController::class, 'index'])->name('habitaciones.index');
+    Route::post('/habitaciones', [HabitacionesController::class, 'store'])->name('habitaciones.store');
+    Route::get('/habitaciones/{idHabitacion}/edit', [HabitacionesController::class, 'edit'])->name('habitaciones.edit');
+    Route::put('/habitaciones/{idHabitacion}', [HabitacionesController::class, 'update'])->name('habitaciones.update');
+    Route::delete('/habitaciones/{idHabitacion}', [HabitacionesController::class, 'destroy'])->name('habitaciones.destroy');
+    Route::delete('/habitaciones/{idHabitacion}/eliminar-definitivo', [HabitacionesController::class, 'eliminarDefinitivo'])->name('habitaciones.eliminarDefinitivo');
 
 });
 
@@ -46,13 +45,10 @@ Route::prefix('recepcionista')->group(function () {
     Route::view('/reservas', 'recepcionista.reservas');
     Route::view('/home', 'recepcionista.home');
     Route::view('/welcome', 'recepcionista.welcome');
+
+   
 });
 
-
-Route::get('/admin', function () {
-    return view('admin.dashboard');
-});
-
-Route::get('/recepcionista', function () {
-    return view('recepcionista.dashboard');
-});
+// Accesos directos
+Route::get('/admin', fn() => view('admin.dashboard'));
+Route::get('/recepcionista', fn() => view('recepcionista.dashboard'));

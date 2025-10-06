@@ -4,18 +4,15 @@ namespace App\Models\Admin;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class Habitacion extends Model
 {
-    // Nombre de la tabla en la base experimental
     protected $table = 'habitacion';
-
-    // Clave primaria UUID
     protected $primaryKey = 'idHabitacion';
     public $incrementing = false;
     protected $keyType = 'string';
 
-    // Campos asignables en camelCase
     protected $fillable = [
         'idHabitacion',
         'numero',
@@ -23,18 +20,23 @@ class Habitacion extends Model
         'capacidad',
         'estado',
         'notas',
+        'precio', // ← ya existe en la tabla
     ];
 
-    // Relación con reservas
     public function reservas(): HasMany
     {
         return $this->hasMany(Reserva::class, 'idHabitacion');
     }
 
-    // Método funcional para validar disponibilidad
     public function estaDisponible(): bool
     {
-        return $this->estado === 'disponible';
+        return Str::lower((string) $this->estado) === 'disponible';
+    }
+
+    public function actualizarEstadoDesdeReservas(): void
+    {
+        $tieneReservaActiva = $this->reservas()->where('estado', 'activa')->exists();
+        $this->estado = $tieneReservaActiva ? 'Ocupada' : 'Disponible';
+        $this->save();
     }
 }
-

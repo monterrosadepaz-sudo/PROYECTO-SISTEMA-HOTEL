@@ -16,14 +16,26 @@ class UsuarioController extends Controller
 
     public function store(Request $request)
     {
-        Usuario::create($request->all());
+        
+
+        Usuario::create(
+             ['nombre' => $request->nombreUsuario,
+             'correo' => $request->correoUsuario,
+             'rol' =>trim ($request->rolUsuario),
+             'estado' => $request->estadoUsuario,]
+        );
         return redirect()->back()->with('mensaje', 'Usuario creado correctamente');
     }
 
     public function update(Request $request, $id)
     {
         $usuario = Usuario::findOrFail($id);
-        $usuario->update($request->all());
+        $usuario->update(
+            ['nombre' => $request->nombreUsuario,
+            'correo' => $request->correoUsuario,
+            'rol' => $request->rolUsuario,
+            'estado' => $request->estadoUsuario,]
+        );
         return redirect()->back()->with('mensaje', 'Usuario actualizado correctamente');
     }
 
@@ -33,5 +45,13 @@ class UsuarioController extends Controller
         $usuario->delete();
         return redirect()->back()->with('mensaje', 'Usuario eliminado correctamente');
     }
+
+    public function edit($id)
+{
+    $usuario = Usuario::findOrFail($id);
+    $usuarios = Usuario::all(); 
+    return view('admin.editar_usuario2', compact('usuario', 'usuarios'));
+}
+
 }
 

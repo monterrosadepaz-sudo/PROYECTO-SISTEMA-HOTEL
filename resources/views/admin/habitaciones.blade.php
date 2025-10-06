@@ -5,34 +5,74 @@
 @section('contenido')
 <h3 class="mb-3">Gestión de Habitaciones</h3>
 
+{{-- Mensaje de confirmación --}}
+@if(session('mensaje'))
+    <div class="alert alert-success">{{ session('mensaje') }}</div>
+@endif
+
+{{-- Referencia al control de estado por recepcionista --}}
+<div class="mb-3">
+    <a href="#" class="btn btn-outline-info btn-sm">
+        Ver control de habitaciones (Recepcionista)
+    </a>
+</div>
+
+{{-- Formulario para crear o editar habitación --}}
 <div class="card shadow" id="seccionFormularioHabitacion">
-    <div class="card-header bg-dark text-white">Nueva Habitación</div>
+    <div class="card-header bg-dark text-white">
+        {{ isset($habitacion) ? 'Editar Habitación' : 'Nueva Habitación' }}
+    </div>
     <div class="card-body">
-        <form id="formularioHabitacion" class="row g-3" method="POST" action="#">
-            @csrf
-            <div class="col-md-3">
-                <label for="numeroHabitacion" class="form-label">Número</label>
-                <input type="text" id="numeroHabitacion" name="numeroHabitacion" class="form-control" placeholder="Ej. 201">
-            </div>
-            <div class="col-md-3">
-                <label for="tipoHabitacion" class="form-label">Tipo</label>
-                <select id="tipoHabitacion" name="tipoHabitacion" class="form-select">
-                    <option>Sencilla</option>
-                    <option>Doble</option>
-                    <option>Suite</option>
-                </select>
-            </div>
-            <div class="col-md-3">
-                <label for="precioHabitacion" class="form-label">Precio</label>
-                <input type="number" id="precioHabitacion" name="precioHabitacion" class="form-control" placeholder="$">
-            </div>
-            <div class="col-md-3 d-grid">
-                <button type="submit" id="btnGuardarHabitacion" name="btnGuardarHabitacion" class="btn btn-dark mt-4">Guardar</button>
-            </div>
-        </form>
+        <form id="formularioHabitacion" method="POST"
+      action="{{ isset($habitacion) ? route('habitaciones.update', $habitacion->idHabitacion) : route('habitaciones.store') }}">
+    @csrf
+    @if(isset($habitacion))
+        @method('PUT')
+    @endif
+
+    <div class="col-md-3">
+        <label for="numeroHabitacion" class="form-label">Número</label>
+        <input type="text" name="numeroHabitacion" id="numeroHabitacion" class="form-control"
+               value="{{ old('numeroHabitacion', $habitacion->numero ?? '') }}" required>
+    </div>
+
+    <div class="col-md-3">
+        <label for="tipoHabitacion" class="form-label">Tipo</label>
+        <select name="tipoHabitacion" id="tipoHabitacion" class="form-select" required>
+            <option value="Sencilla" {{ old('tipoHabitacion', $habitacion->tipoHabitacion ?? '') == 'Sencilla' ? 'selected' : '' }}>Sencilla</option>
+            <option value="Doble" {{ old('tipoHabitacion', $habitacion->tipoHabitacion ?? '') == 'Doble' ? 'selected' : '' }}>Doble</option>
+            <option value="Suite" {{ old('tipoHabitacion', $habitacion->tipoHabitacion ?? '') == 'Suite' ? 'selected' : '' }}>Suite</option>
+        </select>
+    </div>
+
+    <div class="col-md-3">
+        <label for="precioHabitacion" class="form-label">Precio</label>
+        <input type="number" name="precioHabitacion" id="precioHabitacion" class="form-control"
+               value="{{ old('precioHabitacion', $habitacion->precio ?? '') }}" required>
+    </div>
+
+    <div class="col-md-3">
+        <label for="capacidad" class="form-label">Capacidad</label>
+        <input type="number" name="capacidad" id="capacidad" class="form-control"
+               value="{{ old('capacidad', $habitacion->capacidad ?? '') }}" min="1" required>
+    </div>
+
+    <div class="col-md-12">
+        <label for="notas" class="form-label">Notas</label>
+        <textarea name="notas" id="notas" class="form-control" rows="2">{{ old('notas', $habitacion->notas ?? '') }}</textarea>
+    </div>
+
+    <div class="col-md-3 d-grid align-self-end">
+        <button type="submit" class="btn btn-dark">
+            {{ isset($habitacion) ? 'Actualizar' : 'Guardar' }}
+        </button>
+    </div>
+</form>
+
     </div>
 </div>
 
+{{-- Tabla de habitaciones --}}
 <div class="mt-4" id="seccionTablaHabitaciones">
     <h5>Lista de Habitaciones</h5>
     <table class="table table-bordered shadow" id="tablaHabitaciones">
@@ -47,17 +87,33 @@
             </tr>
         </thead>
         <tbody>
+            @foreach($habitaciones as $habitacion)
             <tr>
-                <td>1</td>
-                <td>201</td>
-                <td>Doble</td>
-                <td>$50</td>
-                <td>Disponible</td>
+                <td>{{ $habitacion->id }}</td>
+                <td>{{ $habitacion->numero }}</td>
+                <td>{{ $habitacion->tipo }}</td>
+                <td>{{ $habitacion->precio }}</td>
+                <td>{{ $habitacion->estado }}</td>
                 <td>
-                    <button type="button" id="btnEditarHabitacion1" name="btnEditarHabitacion1" class="btn btn-sm btn-warning">Editar</button>
-                    <button type="button" id="btnEliminarHabitacion1" name="btnEliminarHabitacion1" class="btn btn-sm btn-danger">Eliminar</button>
+                    <a href="{{ route('habitaciones.edit', $habitacion->idHabitacion) }}" class="btn btn-sm btn-warning">Editar</a>
+
+                    <form action="{{ route('habitaciones.destroy', ['idHabitacion' => $habitacion->idHabitacion]) }}" method="POST" style="display:inline;">
+                     @csrf
+                     @method('DELETE')
+                        <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                    </form>
+                    <form action="{{ route('habitaciones.eliminarDefinitivo', ['idHabitacion' => $habitacion->idHabitacion]) }}" method="POST" style="display:inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                        onclick="return confirm('¿Eliminar esta habitación permanentemente? Esta acción no se puede deshacer.')">
+                        Destruir
+                        </button>
+                    </form>
+
                 </td>
             </tr>
+            @endforeach
         </tbody>
     </table>
 </div>

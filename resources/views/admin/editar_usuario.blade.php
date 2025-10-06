@@ -6,40 +6,43 @@
 <h3 class="mb-3">Gestión de Usuarios</h3>
 
 <div class="card shadow mb-4" id="seccionFormularioUsuario">
-    <div class="card-header bg-dark text-white">Nuevo / Editar Usuario</div>
+    <div class="card-header bg-dark text-white">Nuevo Usuario</div>
     <div class="card-body">
-        <form id="formularioUsuario" class="row g-3" method="POST" action=" {{ route('usuarios.store') }}">
+        <form id="formularioUsuario" class="row g-3" method="POST" action="{{ route('usuarios.store') }}">
             @csrf
-            @method('POST') 
-            
+
             <div class="col-md-6">
                 <label for="nombreUsuario" class="form-label">Nombre</label>
-                <input type="text" id="nombreUsuario" name="nombreUsuario" class="form-control" placeholder="Nombre completo">
+                <input type="text" id="nombreUsuario" name="nombreUsuario" class="form-control"
+                       placeholder="Nombre completo" value="{{ old('nombreUsuario') }}">
             </div>
 
             <div class="col-md-6">
                 <label for="correoUsuario" class="form-label">Correo</label>
-                <input type="email" id="correoUsuario" name="correoUsuario" class="form-control" placeholder="correo@ejemplo.com">
+                <input type="email" id="correoUsuario" name="correoUsuario" class="form-control"
+                       placeholder="correo@ejemplo.com" value="{{ old('correoUsuario') }}">
             </div>
 
             <div class="col-md-4">
                 <label for="rolUsuario" class="form-label">Rol</label>
                 <select id="rolUsuario" name="rolUsuario" class="form-select">
-                    <option value="admin">Administrador</option>
-                    <option value="recepcionista">Recepcionista</option>
+                    <option value="administrador" {{ old('rolUsuario') == 'administrador' ? 'selected' : '' }}>Administrador</option>
+                    <option value="recepcionista" {{ old('rolUsuario') == 'recepcionista' ? 'selected' : '' }}>Recepcionista</option>
                 </select>
             </div>
 
             <div class="col-md-4">
                 <label for="estadoUsuario" class="form-label">Estado</label>
                 <select id="estadoUsuario" name="estadoUsuario" class="form-select">
-                    <option value="activo">Activo</option>
-                    <option value="inactivo">Inactivo</option>
+                    <option value="activo" {{ old('estadoUsuario') == 'activo' ? 'selected' : '' }}>Activo</option>
+                    <option value="inactivo" {{ old('estadoUsuario') == 'inactivo' ? 'selected' : '' }}>Inactivo</option>
                 </select>
             </div>
 
             <div class="col-md-4 d-grid align-self-end">
-                <button type="submit" id="btnGuardarUsuario" name="btnGuardarUsuario" class="btn btn-dark">Guardar</button>
+                <button type="submit" id="btnGuardarUsuario" name="btnGuardarUsuario" class="btn btn-dark">
+                    Registrar
+                </button>
             </div>
         </form>
     </div>
@@ -60,17 +63,26 @@
                 </tr>
             </thead>
             <tbody>
+                @foreach ($usuarios as $usuario)
                 <tr>
-                    <td>1</td>
-                    <td>Juan Pérez</td>
-                    <td>juan@mail.com</td>
-                    <td>Administrador</td>
-                    <td>Activo</td>
+                    <td>{{ $usuario->id }}</td>
+                    <td>{{ $usuario->nombre }}</td>
+                    <td>{{ $usuario->correo }}</td>
+                    <td>{{ ucfirst($usuario->rol) }}</td>
+                    <td>{{ ucfirst($usuario->estado) }}</td>
                     <td>
-                        <button type="button" id="btnEditarUsuario1" name="btnEditarUsuario1" class="btn btn-sm btn-warning">Editar</button>
-                        <button type="button" id="btnEliminarUsuario1" name="btnEliminarUsuario1" class="btn btn-sm btn-danger">Eliminar</button>
+                        <a href="{{ route('usuarios.edit', $usuario->id) }}" class="btn btn-sm btn-warning">Editar</a>
+                        <form action="{{ route('usuarios.destroy', $usuario->id) }}" method="POST" class="d-inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm btn-danger"
+                                    onclick="return confirm('¿Estás seguro de eliminar este usuario?')">
+                                Eliminar
+                            </button>
+                        </form>
                     </td>
                 </tr>
+                @endforeach
             </tbody>
         </table>
     </div>
