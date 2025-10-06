@@ -6,21 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        // La tabla ya existe, así que no la crees de nuevo.
-        // Si necesitas modificar la tabla, usa Schema::table('horario', function (Blueprint $table) { ... });
+        Schema::create('horario', function (Blueprint $table) {
+            $table->char('idHorario', 36)->primary();
+            $table->dateTime('horaInicio')->nullable();
+            $table->dateTime('horaFin')->nullable();
+            $table->date('fecha')->nullable();
+            $table->string('diaSemana', 20)->nullable();
+            $table->date('fechaModificacion')->nullable();
+            $table->tinyInteger('estado')->nullable();
+        });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        // Si quieres que la migración pueda revertirse, puedes eliminar la tabla:
-        // Schema::dropIfExists('horario');
+        Schema::dropIfExists('horario');
     }
 };

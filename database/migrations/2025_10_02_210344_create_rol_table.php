@@ -6,21 +6,17 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        // La tabla ya existe, así que no la crees de nuevo.
-        // Si necesitas modificar la tabla, usa Schema::table('rol', function (Blueprint $table) { ... });
+        Schema::create('rol', function (Blueprint $table) {
+            $table->char('idRol', 36)->primary();
+            $table->string('nombre', 100);
+            $table->string('permisos', 255)->nullable();
+        });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        // Si quieres que la migración pueda revertirse, puedes eliminar la tabla:
-        // Schema::dropIfExists('rol');
+        Schema::dropIfExists('rol');
     }
 };

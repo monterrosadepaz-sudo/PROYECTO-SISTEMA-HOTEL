@@ -6,21 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-       // La tabla ya existe, así que no la crees de nuevo.
-       // Si necesitas modificar la tabla, usa Schema::table('inventario', function (Blueprint $table) { ... });
+        Schema::create('inventario', function (Blueprint $table) {
+            $table->string('idItem', 50)->primary();
+            $table->string('nombreItem', 100);
+            $table->string('descripcion', 255)->nullable();
+            $table->integer('cantidadPorHabitacion')->nullable();
+            $table->integer('cantidadTotal')->nullable();
+            $table->string('ubicacionLugarGuardado', 100)->nullable();
+            $table->tinyInteger('estado')->nullable();
+            $table->string('proveedor', 100)->nullable();
+            $table->string('notas', 255)->nullable();
+        });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        // Si quieres que la migración pueda revertirse, puedes eliminar la tabla:
-        // Schema::dropIfExists('inventario');
+        Schema::dropIfExists('inventario');
     }
 };

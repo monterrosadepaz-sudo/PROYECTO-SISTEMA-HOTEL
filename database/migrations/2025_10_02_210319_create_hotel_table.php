@@ -6,21 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        // La tabla ya existe, así que no la crees de nuevo.
-        // Si necesitas modificar la tabla, usa Schema::table('hotel', function (Blueprint $table) { ... });
+        Schema::create('hotel', function (Blueprint $table) {
+            $table->char('idHotel', 36)->primary();
+            $table->string('nombre', 100);
+            $table->string('direccion', 255)->nullable();
+            $table->string('telefono', 20)->nullable();
+            $table->string('serviciosAdicionales', 255)->nullable();
+            $table->date('horarios')->nullable();
+        });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        // Si quieres que la migración pueda revertirse, puedes eliminar la tabla:
-        // Schema::dropIfExists('hotel');
+        Schema::dropIfExists('hotel');
     }
 };

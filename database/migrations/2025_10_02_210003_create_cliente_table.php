@@ -8,13 +8,18 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // La tabla ya existe, así que no la crees de nuevo.
-        // Puedes dejar vacío el método up o usar Schema::table para modificarla si es necesario.
+        Schema::create('cliente', function (Blueprint $table) {
+            $table->char('idCliente', 36)->primary();
+            $table->string('nombre', 100);
+            $table->string('apellido', 100);
+            $table->string('telefono', 20)->nullable();
+            $table->string('direccion', 255)->nullable();
+            $table->string('notas', 255)->nullable();
+        });
     }
 
     public function down(): void
     {
-        // Si quieres que la migración pueda revertirse, puedes eliminar la tabla:
-        // Schema::dropIfExists('cliente');
+        Schema::dropIfExists('cliente');
     }
 };

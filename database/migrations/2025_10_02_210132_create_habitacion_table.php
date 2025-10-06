@@ -1,25 +1,26 @@
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        // La tabla ya existe, así que no la crees de nuevo.
-        // Si necesitas modificar la tabla, usa Schema::table('habitacion', function (Blueprint $table) { ... });
+        Schema::create('habitacion', function (Blueprint $table) {
+            $table->char('idHabitacion', 36)->primary();
+            $table->string('tipoHabitacion', 50)->nullable();
+            $table->integer('capacidad')->nullable();
+            $table->integer('numero')->nullable();
+            $table->tinyInteger('estado')->nullable();
+            $table->string('notas', 255)->nullable();
+            $table->decimal('precio', 10, 2)->default(0.00);
+        });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        // Si quieres que la migración pueda revertirse, puedes eliminar la tabla:
-        // Schema::dropIfExists('habitacion');
+        Schema::dropIfExists('habitacion');
     }
 };

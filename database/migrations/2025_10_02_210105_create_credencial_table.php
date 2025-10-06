@@ -8,13 +8,18 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // La tabla ya existe, así que no la crees de nuevo.
-        // Si necesitas modificar la tabla, usa Schema::table('credencial', function (Blueprint $table) { ... });
+        Schema::create('credencial', function (Blueprint $table) {
+            $table->char('idCredenciales', 36)->primary();
+            $table->string('usuario', 100);
+            $table->string('contrasena', 100);
+            $table->date('fechaCreacion')->nullable();
+            $table->date('fechaModificacion')->nullable();
+            $table->tinyInteger('estado')->nullable();
+        });
     }
 
     public function down(): void
     {
-        // Si quieres que la migración pueda revertirse, puedes eliminar la tabla:
-        // Schema::dropIfExists('credencial');
+        Schema::dropIfExists('credencial');
     }
 };
