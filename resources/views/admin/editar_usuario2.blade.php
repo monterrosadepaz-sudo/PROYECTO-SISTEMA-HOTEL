@@ -26,6 +26,11 @@
                        value="{{ old('correoUsuario', $usuario->correo) }}">
             </div>
 
+            <div class="mb-3 col-md-6">
+            <label for="contrasenha" class="form-label">Contraseña</label>
+            <input type="password" name="contrasenha" id="contrasenha" class="form-control" required>
+            </div>
+
             <div class="col-md-4">
                 <label for="rolUsuario" class="form-label">Rol</label>
                 <select id="rolUsuario" name="rolUsuario" class="form-select">

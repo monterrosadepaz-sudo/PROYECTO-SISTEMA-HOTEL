@@ -21,8 +21,13 @@ class UsuarioController extends Controller
         Usuario::create(
              ['nombre' => $request->nombreUsuario,
              'correo' => $request->correoUsuario,
+             'contrasenha' => bcrypt($request->contrasenha),
              'rol' =>trim ($request->rolUsuario),
-             'estado' => $request->estadoUsuario,]
+             'estado' => $request->estadoUsuario,
+             
+             ]
+             
+             
         );
         return redirect()->back()->with('mensaje', 'Usuario creado correctamente');
     }
@@ -33,8 +38,13 @@ class UsuarioController extends Controller
         $usuario->update(
             ['nombre' => $request->nombreUsuario,
             'correo' => $request->correoUsuario,
+            'contrasenha' => bcrypt($request->contrasenha),
             'rol' => $request->rolUsuario,
-            'estado' => $request->estadoUsuario,]
+            'estado' => $request->estadoUsuario,
+            
+            ]
+
+            
         );
         return redirect()->back()->with('mensaje', 'Usuario actualizado correctamente');
     }

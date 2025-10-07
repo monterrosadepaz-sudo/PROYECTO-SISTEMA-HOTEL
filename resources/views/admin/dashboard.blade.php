@@ -10,44 +10,43 @@
         <div class="card shadow text-center p-3" id="cardReservas">
             <h5>Reservas</h5>
             <p>Gestiona todas las reservas</p>
-            <a href="/admin/reservas" id="btnIrReservas" class="btn btn-sm btn-dark">Ir</a>
+            <a href="{{ url('/admin/reservas') }}" id="btnIrReservas" class="btn btn-sm btn-dark">Ir</a>
         </div>
     </div>
     <div class="col-md-3">
         <div class="card shadow text-center p-3" id="cardHabitaciones">
             <h5>Habitaciones</h5>
             <p>Controla disponibilidad</p>
-            <a href="/admin/habitaciones" id="btnIrHabitaciones" class="btn btn-sm btn-dark">Ir</a>
+            <a href="{{ url('/admin/habitaciones') }}" id="btnIrHabitaciones" class="btn btn-sm btn-dark">Ir</a>
         </div>
     </div>
     <div class="col-md-3">
         <div class="card shadow text-center p-3" id="cardClientes">
             <h5>Clientes</h5>
             <p>Lista de huéspedes</p>
-            <a href="/admin/clientes" id="btnIrClientes" class="btn btn-sm btn-dark">Ir</a>
+            <a href="{{ url('/admin/clientes') }}" id="btnIrClientes" class="btn btn-sm btn-dark">Ir</a>
         </div>
     </div>
     <div class="col-md-3">
         <div class="card shadow text-center p-3" id="cardReportes">
             <h5>Reportes</h5>
             <p>Genera informes</p>
-            <a href="/admin/reportes" id="btnIrReportes" class="btn btn-sm btn-dark">Ir</a>
+            <a href="{{ url('/admin/reportes') }}" id="btnIrReportes" class="btn btn-sm btn-dark">Ir</a>
         </div>
     </div>
 
-
     <div class="col-md-3">
-        <div class="card shadow text-center p-3" id="cardusuarios">
-            <h5>USUARIOS</h5>
-            <p>Controlando cuantos recepcionistas usan este sistema</p>
-            <a href="/admin/editar_usuario" id="btnIrusuario" class="btn btn-sm btn-dark">Ir</a>
+        <div class="card shadow text-center p-3" id="cardUsuarios">
+            <h5>Usuarios</h5>
+            <p>Controlando cuántos recepcionistas usan este sistema</p>
+            <a href="{{ route('usuarios.index') }}" id="btnIrUsuarios" class="btn btn-sm btn-dark">Ir</a>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card shadow text-center p-3" id="cardproducto">
-            <h5>PRODUCTO</h5>
+        <div class="card shadow text-center p-3" id="cardProducto">
+            <h5>Productos</h5>
             <p>Controlando los productos del hotel</p>
-            <a href="/admin/editar_producto" id="btnIrusuario" class="btn btn-sm btn-dark">Ir</a>
+            <a href="{{ route('productos.index') }}" id="btnIrProducto" class="btn btn-sm btn-dark">Ir</a>
         </div>
     </div>
 </div>

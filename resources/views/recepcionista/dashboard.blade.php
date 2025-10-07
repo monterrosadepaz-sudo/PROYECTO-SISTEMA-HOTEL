@@ -10,7 +10,8 @@
         <div class="card shadow text-center p-3" id="cardCheckin">
             <h5>Check-In</h5>
             <p>Registrar entrada de huéspedes</p>
-            <a href="/recepcionista/checkin" id="btnIrCheckin" class="btn btn-sm btn-dark">Ir</a>
+            <a href="{{ route('checkin.index') }}" class="btn btn-dark">Ir al Check-In</a>
+
         </div>
     </div>
     <div class="col-md-4">

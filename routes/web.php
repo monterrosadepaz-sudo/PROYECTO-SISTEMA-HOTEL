@@ -3,15 +3,25 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\UsuarioController;
 use App\Http\Controllers\Admin\HabitacionesController;
-use App\Http\Controllers\Recepcion\RecepcionHabitacionController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductoController;
+use App\Http\Controllers\LoginController;
 
-// Página de inicio
-Route::view('/', 'home');
+use App\Http\Controllers\Recepcionista\CheckinController;
+
+// Página de inicio que manda al login
+Route::get('/', function () {
+    return redirect()->route('login');
+});
+
+// Rutas de autenticación
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [LoginController::class, 'login']);
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // Vistas del administrador
 Route::prefix('admin')->group(function () {
-    Route::view('/dashboard', 'admin.dashboard');
+    Route::view('/dashboard', 'admin.dashboard')->name('admin.dashboard')->middleware('auth');
     Route::view('/clientes', 'admin.clientes');
     Route::view('/usuarios', 'admin.usuarios');
     Route::view('/reservas', 'admin.reservas');
@@ -35,7 +45,7 @@ Route::prefix('admin')->group(function () {
     Route::delete('/habitaciones/{idHabitacion}', [HabitacionesController::class, 'destroy'])->name('habitaciones.destroy');
     Route::delete('/habitaciones/{idHabitacion}/eliminar-definitivo', [HabitacionesController::class, 'eliminarDefinitivo'])->name('habitaciones.eliminarDefinitivo');
 
-    //rutas del los productos
+    // Gestión de productos
     Route::get('/productos', [ProductoController::class, 'index'])->name('productos.index');
     Route::post('/productos', [ProductoController::class, 'store'])->name('productos.store');
     Route::get('/productos/{idProducto}/edit', [ProductoController::class, 'edit'])->name('productos.edit');
@@ -43,22 +53,30 @@ Route::prefix('admin')->group(function () {
     Route::delete('/productos/{idProducto}', [ProductoController::class, 'destroy'])->name('productos.destroy');
     Route::delete('/productos/{idProducto}/eliminar', [ProductoController::class, 'eliminarDefinitivo'])->name('productos.eliminarDefinitivo');
     Route::put('/productos/{idProducto}/reactivar', [ProductoController::class, 'reactivar'])->name('productos.reactivar');
-
 });
 
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+
+
+
 // Vistas del recepcionista
-Route::prefix('recepcionista')->group(function () {
-    Route::view('/dashboard', 'recepcionista.dashboard');
-    Route::view('/checkin', 'recepcionista.checkin');
+    Route::prefix('recepcionista')->middleware('auth')->group(function () {
+    Route::get('/dashboard', fn() => view('recepcionista.dashboard'))->name('recepcionista.dashboard');
+
+    Route::get('/test-checkin', [App\Http\Controllers\Recepcionista\CheckinController::class, 'index']);
+
+
+    // CRUD completo para Check-In
+    Route::get('/checkin', [CheckinController::class, 'index'])->name('checkin.index');
+    Route::post('/checkin', [CheckinController::class, 'store'])->name('checkin.store');
+    Route::put('/checkin/{id}', [CheckinController::class, 'update'])->name('checkin.update');
+    Route::delete('/checkin/{id}', [CheckinController::class, 'destroy'])->name('checkin.destroy');
+
+    // Otras vistas del recepcionista
     Route::view('/checkout', 'recepcionista.checkout');
     Route::view('/consumos', 'recepcionista.consumos');
     Route::view('/reservas', 'recepcionista.reservas');
     Route::view('/home', 'recepcionista.home');
     Route::view('/welcome', 'recepcionista.welcome');
-
-   
 });
 
-// Accesos directos
-Route::get('/admin', fn() => view('admin.dashboard'));
-Route::get('/recepcionista', fn() => view('recepcionista.dashboard'));
