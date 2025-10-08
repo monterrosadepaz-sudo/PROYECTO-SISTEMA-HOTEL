@@ -18,14 +18,15 @@
         <div class="card shadow text-center p-3" id="cardCheckout">
             <h5>Check-Out</h5>
             <p>Registrar salida de huéspedes</p>
-            <a href="/recepcionista/checkout" id="btnIrCheckout" class="btn btn-sm btn-dark">Ir</a>
+            <a href="{{ route('checkout.index') }}" id="btnIrCheckout" class="btn btn-sm btn-dark">Ir al Check-Out</a>
+
         </div>
     </div>
     <div class="col-md-4">
         <div class="card shadow text-center p-3" id="cardReservasRecepcionista">
             <h5>Reservas</h5>
             <p>Ver y gestionar reservas</p>
-            <a href="/recepcionista/reservas" id="btnIrReservasRecepcionista" class="btn btn-sm btn-dark">Ir</a>
+            <a href="{{ route('reserva.index') }}" id="btnIrReservasRecepcionista" class="btn btn-sm btn-dark">Ir</a>
         </div>
     </div>
 </div>

@@ -4,8 +4,8 @@ namespace App\Models\Recepcionista;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Models\Cliente;
-use App\Models\Habitacion;
+use App\Models\Admin\Cliente;
+use App\Models\Admin\Habitacion;
 
 class Checkin extends Model
 {

@@ -8,6 +8,8 @@ use App\Http\Controllers\Admin\ProductoController;
 use App\Http\Controllers\LoginController;
 
 use App\Http\Controllers\Recepcionista\CheckinController;
+use App\Http\Controllers\Recepcionista\ReservaController;
+use App\Http\Controllers\Recepcionista\CheckoutController;
 
 // Página de inicio que manda al login
 Route::get('/', function () {
@@ -63,19 +65,32 @@ Route::prefix('admin')->group(function () {
     Route::prefix('recepcionista')->middleware('auth')->group(function () {
     Route::get('/dashboard', fn() => view('recepcionista.dashboard'))->name('recepcionista.dashboard');
 
-    Route::get('/test-checkin', [App\Http\Controllers\Recepcionista\CheckinController::class, 'index']);
-
-
     // CRUD completo para Check-In
     Route::get('/checkin', [CheckinController::class, 'index'])->name('checkin.index');
     Route::post('/checkin', [CheckinController::class, 'store'])->name('checkin.store');
     Route::put('/checkin/{id}', [CheckinController::class, 'update'])->name('checkin.update');
-    Route::delete('/checkin/{id}', [CheckinController::class, 'destroy'])->name('checkin.destroy');
+    //Route::delete('/checkin/{id}', [CheckinController::class, 'destroy'])->name('checkin.destroy');
+    Route::delete('/checkin/{idCheckin}', [CheckinController::class, 'destroy'])->name('checkin.destroy');
 
-    // Otras vistas del recepcionista
-    Route::view('/checkout', 'recepcionista.checkout');
+
+    //  Reservas 
+    Route::get('/reservas', [ReservaController::class, 'index'])->name('reserva.index');
+    Route::post('/reservas', [ReservaController::class, 'store'])->name('reserva.store');
+    Route::get('/reservas/{id}/edit', [ReservaController::class, 'edit'])->name('reserva.edit');
+    Route::put('/reservas/{id}', [ReservaController::class, 'update'])->name('reserva.update');
+    Route::delete('/reservas/{id}', [ReservaController::class, 'destroy'])->name('reserva.destroy');
+    Route::put('/reservas/{id}/confirmar', [ReservaController::class, 'confirmar'])->name('reserva.confirmar');
+
+    // Check-Out
+    
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout/{idReserva}/registrar', [CheckoutController::class, 'registrarSalida'])->name('checkout.registrar');
+   
+
+
+    // Otras vistas
+   
     Route::view('/consumos', 'recepcionista.consumos');
-    Route::view('/reservas', 'recepcionista.reservas');
     Route::view('/home', 'recepcionista.home');
     Route::view('/welcome', 'recepcionista.welcome');
 });

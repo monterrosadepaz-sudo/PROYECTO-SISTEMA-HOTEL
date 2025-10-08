@@ -3,6 +3,9 @@
 namespace App\Models\Admin;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Recepcionista\Venta;
+
 
 class Producto extends Model
 {
@@ -25,4 +28,9 @@ class Producto extends Model
         'stock' => 'integer',
         'estado' => 'boolean',
     ];
+
+    public function ventas(): HasMany
+    {
+    return $this->hasMany(Venta::class, 'idProducto');
+    }
 }

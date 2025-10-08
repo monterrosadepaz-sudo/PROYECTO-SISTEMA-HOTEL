@@ -1,6 +1,13 @@
 <?php
 
-public function index()
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+
+class dashboardController extends Controller
 {
-    return view('admin.dashboard');
+    public function index()
+    {
+        return view('admin.dashboard');
+    }
 }

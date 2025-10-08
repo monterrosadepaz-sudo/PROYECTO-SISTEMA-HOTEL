@@ -1,9 +1,14 @@
 <?php
 
 namespace App\Models\Admin;
+use App\Models\Admin\Cliente;
+use App\Models\Admin\Habitacion;
+use App\Models\Recepcionista\Venta;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
 
 class Reserva extends Model
 {
@@ -23,7 +28,7 @@ class Reserva extends Model
         'fechaEntrada',
         'fechaSalida',
         'estado',
-        'notas',
+        
     ];
 
     // Relación con Cliente
@@ -36,5 +41,10 @@ class Reserva extends Model
     public function habitacion(): BelongsTo
     {
         return $this->belongsTo(Habitacion::class, 'idHabitacion');
+    }
+
+    public function ventas(): HasMany
+    {
+    return $this->hasMany(Venta::class, 'idReserva');
     }
 }

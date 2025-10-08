@@ -80,17 +80,15 @@
                     <input type="text" name="apellido" id="apellido" class="form-control" required>
                 </div>
 
-
                 <div class="mb-3">
                     <label for="documento" class="form-label">Documento de identidad</label>
                     <input type="text" name="documento" id="documento" class="form-control" required>
                 </div>
 
                 <div class="mb-3">
-                    <label for="documento" class="form-label">Numero de telefono</label>
+                    <label for="telefono" class="form-label">Número de teléfono</label>
                     <input type="text" name="telefono" id="telefono" class="form-control" required>
                 </div>
-
 
                 <div class="mb-3">
                     <label for="habitacion_id" class="form-label">Seleccionar habitación</label>
@@ -125,10 +123,11 @@
                         <th>Nombre</th>
                         <th>Apellido</th>
                         <th>Documento</th>
-                        <th>Telefono</th>
+                        <th>Teléfono</th>
                         <th>Habitación</th>
                         <th>Fecha de entrada</th>
                         <th>Estado</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -142,10 +141,19 @@
                             <td>{{ $c->habitacion->numero ?? 'N/A' }}</td>
                             <td>{{ $c->fechaEntrada }}</td>
                             <td>{{ ucfirst($c->estado) }}</td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-warning" onclick="mostrarFormulario('{{ $c->idReserva }}')">Editar</button>
+
+                                <form action="{{ route('checkin.destroy', ['id' => $c->idReserva]) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este check-in?')">Eliminar</button>
+                                </form>
+                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="text-center text-muted">No hay check-ins registrados</td>
+                            <td colspan="9" class="text-center text-muted">No hay check-ins registrados</td>
                         </tr>
                     @endforelse
                 </tbody>

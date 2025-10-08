@@ -7,15 +7,17 @@ use Illuminate\Http\Request;
 use App\Models\Recepcionista\Checkin;
 use App\Models\Admin\Habitacion;
 use App\Models\Admin\Cliente;
-use App\Models\Admin\Reserva;
 
 class CheckinController extends Controller
 {
     public function index()
     {
         $habitacionesTotales = Habitacion::all();
-        $habitacionesOcupadasIds = Reserva::where('estado', 'activa')->pluck('idHabitacion');
+
+        $habitacionesOcupadasIds = Checkin::whereIn('estado', ['activa', 'confirmada'])->pluck('idHabitacion');
+
         $habitacionesOcupadas = Habitacion::whereIn('idHabitacion', $habitacionesOcupadasIds)->get();
+
         $habitacionesDisponibles = Habitacion::whereNotIn('idHabitacion', $habitacionesOcupadasIds)
             ->whereRaw('LOWER(estado) = ?', ['disponible'])
             ->get();
@@ -24,7 +26,9 @@ class CheckinController extends Controller
         $ocupadas = $habitacionesOcupadas->count();
         $disponibles = $habitacionesDisponibles->count();
 
-        $checkins = Checkin::with(['cliente', 'habitacion'])->get();
+        $checkins = Checkin::with(['cliente', 'habitacion'])
+            ->where('estado', 'activa')
+            ->get();
 
         return view('recepcionista.checkin', compact(
             'total',
@@ -48,10 +52,8 @@ class CheckinController extends Controller
             'fecha_entrada' => 'required|date',
         ]);
 
-        // Buscar cliente por documento
         $cliente = Cliente::where('documento', $request->documento)->first();
 
-        // Si no existe, lo creamos manualmente con todos los campos requeridos
         if (!$cliente) {
             $cliente = Cliente::create([
                 'idCliente' => $request->idCliente,
@@ -62,15 +64,14 @@ class CheckinController extends Controller
             ]);
         }
 
-        // Crear el check-in
-        $checkin = Checkin::create([
+        Checkin::create([
+            'idReserva' => \Str::uuid(),
             'idCliente' => $cliente->idCliente,
             'idHabitacion' => $request->habitacion_id,
             'fechaEntrada' => $request->fecha_entrada,
             'estado' => 'activa',
         ]);
 
-        // Marcar habitación como no disponible
         Habitacion::where('idHabitacion', $request->habitacion_id)
             ->update(['estado' => 'No disponible']);
 
