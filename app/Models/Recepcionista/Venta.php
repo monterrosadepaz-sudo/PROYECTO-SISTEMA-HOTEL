@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models\Recepcionista;
 
 use Illuminate\Database\Eloquent\Model;
@@ -9,17 +8,19 @@ use App\Models\Admin\Producto;
 
 class Venta extends Model
 {
-    protected $table = 'venta'; // Asegura que apunte a la tabla correcta
-    protected $primaryKey = 'idVenta'; // Ajusta si aplica
-    public $incrementing = false; // Si estás usando UUIDs
-    protected $keyType = 'string';
+    protected $table = 'venta';
+    protected $primaryKey = 'idVenta';
+    public $incrementing = true;       
+    protected $keyType = 'int';       
 
     protected $fillable = [
         'idReserva',
         'idProducto',
+        'idEmpleado',
+        'cantidad',
         'monto',
+        'fecha',       
         'metodo',
-        'fecha_pago',
         'referencia',
     ];
 
@@ -33,4 +34,3 @@ class Venta extends Model
         return $this->belongsTo(Producto::class, 'idProducto');
     }
 }
-

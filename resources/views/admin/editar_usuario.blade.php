@@ -4,6 +4,8 @@
 
 @section('contenido')
 <h3 class="mb-3">Gestión de Usuarios</h3>
+<p>Total usuarios: {{ count($usuarios) }}</p>
+
 
 <div class="card shadow mb-4" id="seccionFormularioUsuario">
     <div class="card-header bg-dark text-white">Nuevo Usuario</div>

@@ -4,12 +4,14 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\UsuarioController;
 use App\Http\Controllers\Admin\HabitacionesController;
 use App\Http\Controllers\Admin\DashboardController;
+
 use App\Http\Controllers\Admin\ProductoController;
 use App\Http\Controllers\LoginController;
 
 use App\Http\Controllers\Recepcionista\CheckinController;
 use App\Http\Controllers\Recepcionista\ReservaController;
 use App\Http\Controllers\Recepcionista\CheckoutController;
+use App\Http\Controllers\Recepcionista\DashBoardController as RecepcionistaDashboardController;
 
 // Página de inicio que manda al login
 Route::get('/', function () {
@@ -63,13 +65,16 @@ Route::prefix('admin')->group(function () {
 
 // Vistas del recepcionista
     Route::prefix('recepcionista')->middleware('auth')->group(function () {
-    Route::get('/dashboard', fn() => view('recepcionista.dashboard'))->name('recepcionista.dashboard');
+    Route::get('/dashboard', [RecepcionistaDashboardController::class, 'index'])->name('recepcionista.dashboard');
+
+    
+
 
     // CRUD completo para Check-In
     Route::get('/checkin', [CheckinController::class, 'index'])->name('checkin.index');
     Route::post('/checkin', [CheckinController::class, 'store'])->name('checkin.store');
+    Route::get('/checkin/{id}/edit', [CheckinController::class, 'edit'])->name('checkin.edit'); // ← corregido a GET
     Route::put('/checkin/{id}', [CheckinController::class, 'update'])->name('checkin.update');
-    //Route::delete('/checkin/{id}', [CheckinController::class, 'destroy'])->name('checkin.destroy');
     Route::delete('/checkin/{idCheckin}', [CheckinController::class, 'destroy'])->name('checkin.destroy');
 
 
@@ -85,6 +90,8 @@ Route::prefix('admin')->group(function () {
     
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout/{idReserva}/registrar', [CheckoutController::class, 'registrarSalida'])->name('checkout.registrar');
+    Route::post('/checkout/checkin/{idCheckin}/registrar', [CheckoutController::class, 'registrarCheckin'])->name('checkout.registrarCheckin');
+
    
 
 

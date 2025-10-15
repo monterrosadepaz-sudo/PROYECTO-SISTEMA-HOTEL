@@ -39,4 +39,11 @@ class Habitacion extends Model
         $this->estado = $tieneReservaActiva ? 'Ocupada' : 'Disponible';
         $this->save();
     }
+    
+    public function actualizarEstado(): void
+    {
+        $tieneReservaActiva = $this->reservas()->where('estado', 'activa')->exists();
+        $this->estado = $tieneReservaActiva ? 'No disponible' : 'Disponible';
+        $this->save();
+}
 }

@@ -10,50 +10,7 @@
         </div>
     @endif
 
-    {{-- Estado de habitaciones --}}
-    <div class="card mb-4">
-        <div class="card-header bg-dark text-white">Estado de habitaciones</div>
-        <div class="card-body">
-            <ul class="list-group">
-                <li class="list-group-item">Total registradas: <strong>{{ $total }}</strong></li>
-                <li class="list-group-item">Ocupadas: <strong>{{ $ocupadas }}</strong></li>
-                <li class="list-group-item">Disponibles: <strong>{{ $disponibles }}</strong></li>
-            </ul>
-        </div>
-    </div>
 
-    {{-- Listado de habitaciones --}}
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header bg-success text-white">Habitaciones disponibles</div>
-                <ul class="list-group list-group-flush">
-                    @forelse($habitacionesDisponibles as $h)
-                        <li class="list-group-item">
-                            Nº {{ $h->numero }} - {{ $h->tipoHabitacion }} (Capacidad: {{ $h->capacidad }}) - ${{ number_format($h->precio, 2) }}
-                        </li>
-                    @empty
-                        <li class="list-group-item text-danger">No hay habitaciones disponibles</li>
-                    @endforelse
-                </ul>
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header bg-danger text-white">Habitaciones ocupadas</div>
-                <ul class="list-group list-group-flush">
-                    @forelse($habitacionesOcupadas as $h)
-                        <li class="list-group-item">
-                            Nº {{ $h->numero }} - {{ $h->tipoHabitacion }} (Capacidad: {{ $h->capacidad }}) - ${{ number_format($h->precio, 2) }}
-                        </li>
-                    @empty
-                        <li class="list-group-item text-success">No hay habitaciones ocupadas</li>
-                    @endforelse
-                </ul>
-            </div>
-        </div>
-    </div>
 
     {{-- Formulario de Check-In --}}
     <div class="card mb-4">
@@ -91,8 +48,8 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="habitacion_id" class="form-label">Seleccionar habitación</label>
-                    <select name="habitacion_id" id="habitacion_id" class="form-select" required>
+                    <label for="idHabitacion" class="form-label">Seleccionar habitación</label>
+                    <select name="idHabitacion" id="idHabitacion" class="form-select" required>
                         <option value="">-- Seleccione una habitación disponible --</option>
                         @foreach($habitacionesDisponibles as $h)
                             <option value="{{ $h->idHabitacion }}">
@@ -103,14 +60,15 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="fecha_entrada" class="form-label">Fecha de entrada</label>
-                    <input type="date" name="fecha_entrada" id="fecha_entrada" class="form-control" required>
+                    <label for="fechaEntrada" class="form-label">Fecha de entrada</label>
+                    <input type="date" name="fechaEntrada" id="fechaEntrada" class="form-control" required>
                 </div>
 
                 <button type="submit" class="btn btn-success">Registrar Check-In</button>
             </form>
         </div>
     </div>
+//------------------------------------
 
     {{-- Tabla de Check-Ins registrados --}}
     <div class="card">
@@ -142,15 +100,78 @@
                             <td>{{ $c->fechaEntrada }}</td>
                             <td>{{ ucfirst($c->estado) }}</td>
                             <td>
-                                <button type="button" class="btn btn-sm btn-warning" onclick="mostrarFormulario('{{ $c->idReserva }}')">Editar</button>
+                                <a href="{{ route('checkin.index', ['editar' => $c->idCheckin]) }}" class="btn btn-sm btn-warning">Editar</a>
 
-                                <form action="{{ route('checkin.destroy', ['id' => $c->idReserva]) }}" method="POST" style="display:inline;">
+                                <form action="{{ route('checkin.destroy', ['idCheckin' => $c->idCheckin]) }}" method="POST" style="display:inline;">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este check-in?')">Eliminar</button>
                                 </form>
                             </td>
                         </tr>
+
+                        {{-- Formulario de edición debajo de la fila --}}
+                        @if($checkinEdit && $checkinEdit->idCheckin == $c->idCheckin)
+                            <tr>
+                                <td colspan="9">
+                                    <div class="card mb-4 border-warning">
+                                        <div class="card-header bg-warning text-dark">Editar Check-In</div>
+                                        <div class="card-body">
+                                            <form method="POST" action="{{ route('checkin.update', $checkinEdit->idCheckin) }}">
+                                                @csrf
+                                                @method('PUT')
+
+                                                <input type="hidden" name="idCliente" value="{{ $checkinEdit->cliente->idCliente }}">
+
+                                                <div class="mb-3">
+                                                    <label class="form-label">Nombre</label>
+                                                    <input type="text" name="nombre" class="form-control" value="{{ $checkinEdit->cliente->nombre }}" required>
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label class="form-label">Apellido</label>
+                                                    <input type="text" name="apellido" class="form-control" value="{{ $checkinEdit->cliente->apellido }}" required>
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label class="form-label">Documento</label>
+                                                    <input type="text" name="documento" class="form-control" value="{{ $checkinEdit->cliente->documento }}" required>
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label class="form-label">Teléfono</label>
+                                                    <input type="text" name="telefono" class="form-control" value="{{ $checkinEdit->cliente->telefono }}" required>
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label class="form-label">Habitación</label>
+                                                    <select name="idHabitacion" class="form-select" required>
+                                                        {{-- Incluimos la habitación actual aunque no esté disponible --}}
+                                                        <option value="{{ $checkinEdit->habitacion->idHabitacion }}" selected>
+                                                            Nº {{ $checkinEdit->habitacion->numero }} - {{ $checkinEdit->habitacion->tipoHabitacion }}
+                                                        </option>
+                                                        @foreach($habitacionesDisponibles as $h)
+                                                            @if($h->idHabitacion != $checkinEdit->habitacion->idHabitacion)
+                                                                <option value="{{ $h->idHabitacion }}">
+                                                                    Nº {{ $h->numero }} - {{ $h->tipoHabitacion }}
+                                                                </option>
+                                                            @endif
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label class="form-label">Fecha de entrada</label>
+                                                    <input type="date" name="fechaEntrada" class="form-control" value="{{ $checkinEdit->fechaEntrada }}" required>
+                                                </div>
+
+                                                <button type="submit" class="btn btn-warning">Actualizar Check-In</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endif
                     @empty
                         <tr>
                             <td colspan="9" class="text-center text-muted">No hay check-ins registrados</td>
@@ -170,3 +191,4 @@ function generarUUID() {
 }
 </script>
 @endsection
+

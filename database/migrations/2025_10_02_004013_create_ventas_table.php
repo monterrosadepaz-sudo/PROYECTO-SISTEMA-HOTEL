@@ -12,26 +12,33 @@ return new class extends Migration
     public function up(): void
     {
            Schema::create('venta', function (Blueprint $table) {
-        $table->char('idVenta', 36)->primary();
-        $table->char('idReserva', 36);
-        $table->char('idProducto', 36);
-        $table->char('idEmpleado', 36);
-        $table->integer('cantidad');
-        $table->decimal('monto', 10, 2);
-        $table->date('fecha');
-        $table->timestamps();
+    // PK autoincremental
+    $table->bigIncrements('idVenta');
 
-        $table->foreign('idReserva')->references('idReserva')->on('reserva')->onDelete('cascade');
-        $table->foreign('idProducto')->references('idProducto')->on('producto')->onDelete('cascade');
-        $table->foreign('idEmpleado')->references('idEmpleado')->on('empleado')->onDelete('cascade');
+    // FKs y campos
+    $table->char('idReserva', 36);
+    $table->char('idProducto', 36);
+    $table->char('idEmpleado', 36)->nullable(); // lo dejamos nullable si no lo llenas aún
+
+    $table->integer('cantidad')->default(1);
+    $table->decimal('monto', 10, 2);
+    $table->date('fecha');
+    $table->timestamps();
+
+    $table->foreign('idReserva')->references('idReserva')->on('reserva')->onDelete('cascade');
+    $table->foreign('idProducto')->references('idProducto')->on('producto')->onDelete('cascade');
+    $table->foreign('idEmpleado')->references('idEmpleado')->on('empleado')->onDelete('set null');
+
+
     });
     }
 
     /**
      * Reverse the migrations.
      */
-    public function down(): void
-    {
-        Schema::dropIfExists('ventas');
+   public function down(): void
+        {
+    Schema::dropIfExists('venta');
     }
+
 };

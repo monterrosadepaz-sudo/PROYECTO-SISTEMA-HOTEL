@@ -53,7 +53,7 @@
                     @foreach($habitacionesDisponibles as $h)
                         <option value="{{ $h->idHabitacion }}"
                             {{ old('idHabitacion', $reservaEdit->idHabitacion ?? '') == $h->idHabitacion ? 'selected' : '' }}>
-                            Nº {{ $h->numero }} - {{ $h->tipoHabitacion }} (Capacidad: {{ $h->capacidad }})
+                            Nº {{ $h->numero }} - {{ $h->tipoHabitacion }} (Capacidad: {{ $h->capacidad }}- precio/24h: {{ $h->precio }})
                         </option>
                     @endforeach
                 @endisset

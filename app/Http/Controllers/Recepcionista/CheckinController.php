@@ -4,53 +4,58 @@ namespace App\Http\Controllers\Recepcionista;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use App\Models\Recepcionista\Checkin;
 use App\Models\Admin\Habitacion;
 use App\Models\Admin\Cliente;
 
 class CheckinController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $habitacionesTotales = Habitacion::all();
+        Log::info('Entrando al método index() del controlador');
 
-        $habitacionesOcupadasIds = Checkin::whereIn('estado', ['activa', 'confirmada'])->pluck('idHabitacion');
+        $habitacionesDisponibles = Habitacion::where('estado', 'Disponible')->get();
 
-        $habitacionesOcupadas = Habitacion::whereIn('idHabitacion', $habitacionesOcupadasIds)->get();
 
-        $habitacionesDisponibles = Habitacion::whereNotIn('idHabitacion', $habitacionesOcupadasIds)
-            ->whereRaw('LOWER(estado) = ?', ['disponible'])
-            ->get();
-
-        $total = $habitacionesTotales->count();
-        $ocupadas = $habitacionesOcupadas->count();
-        $disponibles = $habitacionesDisponibles->count();
-
+        // Checkins activos
         $checkins = Checkin::with(['cliente', 'habitacion'])
             ->where('estado', 'activa')
+            ->orderByDesc('created_at')
             ->get();
 
+        // Carga condicional del formulario de edición
+        $checkinEdit = null;
+        if ($request->has('editar')) {
+            $checkinEdit = Checkin::with(['cliente', 'habitacion'])
+                ->find($request->editar);
+
+            if ($checkinEdit) {
+                Log::info('Cargando formulario de edición para checkin: ' . $checkinEdit->idCheckin);
+            }
+        }
+
         return view('recepcionista.checkin', compact(
-            'total',
-            'ocupadas',
-            'disponibles',
-            'habitacionesDisponibles',
-            'habitacionesOcupadas',
-            'checkins'
+            'checkins',
+            'checkinEdit',
+                'habitacionesDisponibles',
         ));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'idCliente' => 'required|uuid',
+            'idCliente' => 'required',
             'nombre' => 'required|string',
             'apellido' => 'required|string',
             'documento' => 'required|string',
             'telefono' => 'required|string',
-            'habitacion_id' => 'required|exists:habitacion,idHabitacion',
-            'fecha_entrada' => 'required|date',
+            'idHabitacion' => 'required|exists:habitacion,idHabitacion',
+            'fechaEntrada' => 'required|date',
         ]);
+
+        Log::info('Datos recibidos en store()', $request->all());
 
         $cliente = Cliente::where('documento', $request->documento)->first();
 
@@ -64,63 +69,94 @@ class CheckinController extends Controller
             ]);
         }
 
-        Checkin::create([
-            'idReserva' => \Str::uuid(),
-            'idCliente' => $cliente->idCliente,
-            'idHabitacion' => $request->habitacion_id,
-            'fechaEntrada' => $request->fecha_entrada,
-            'estado' => 'activa',
-        ]);
+        try {
+            DB::transaction(function () use ($request, $cliente) {
+                // Crear checkin
+                Checkin::create([
+                    'idCliente' => $cliente->idCliente,
+                    'idHabitacion' => $request->idHabitacion,
+                    'fechaEntrada' => $request->fechaEntrada,
+                    'estado' => 'activa',
+                ]);
 
-        Habitacion::where('idHabitacion', $request->habitacion_id)
-            ->update(['estado' => 'No disponible']);
+                // Marcar habitación como no disponible
+                Habitacion::where('idHabitacion', $request->idHabitacion)
+                    ->update(['estado' => 'No disponible']);
+            });
 
-        return redirect()->back()->with('success', 'Check-In registrado correctamente');
+            return redirect()->back()->with('success', 'Check-In registrado correctamente');
+        } catch (\Exception $e) {
+            Log::error('Error al crear checkin: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'No se pudo registrar el Check-In: ' . $e->getMessage());
+        }
     }
 
     public function update(Request $request, $id)
     {
         $request->validate([
-            'idCliente' => 'required|uuid',
+            'idCliente' => 'required',
             'nombre' => 'required|string',
             'apellido' => 'required|string',
             'documento' => 'required|string',
             'telefono' => 'required|string',
-            'habitacion_id' => 'required|exists:habitacion,idHabitacion',
-            'fecha_entrada' => 'required|date',
+            'idHabitacion' => 'required|exists:habitacion,idHabitacion',
+            'fechaEntrada' => 'required|date',
         ]);
 
-        $checkin = Checkin::findOrFail($id);
+        try {
+            DB::transaction(function () use ($request, $id) {
+                // Buscar check-in
+                $checkin = Checkin::findOrFail($id);
 
-        $cliente = Cliente::where('documento', $request->documento)->first();
+                // Actualizar cliente
+                $cliente = Cliente::findOrFail($request->idCliente);
+                $cliente->update([
+                    'nombre' => $request->nombre,
+                    'apellido' => $request->apellido,
+                    'documento' => $request->documento,
+                    'telefono' => $request->telefono,
+                ]);
 
-        if (!$cliente) {
-            $cliente = Cliente::create([
-                'idCliente' => $request->idCliente,
-                'nombre' => $request->nombre,
-                'apellido' => $request->apellido,
-                'telefono' => $request->telefono,
-                'documento' => $request->documento
-            ]);
+                // Si cambió la habitación, liberar la anterior y ocupar la nueva
+                if ($checkin->idHabitacion != $request->idHabitacion) {
+                    Habitacion::where('idHabitacion', $checkin->idHabitacion)
+                        ->update(['estado' => 'Disponible']);
+                    Habitacion::where('idHabitacion', $request->idHabitacion)
+                        ->update(['estado' => 'No disponible']);
+                }
+
+                // Actualizar check-in
+                $checkin->update([
+                    'idCliente' => $cliente->idCliente,
+                    'idHabitacion' => $request->idHabitacion,
+                    'fechaEntrada' => $request->fechaEntrada,
+                ]);
+            });
+
+            return redirect()->route('checkin.index')->with('success', 'Check-In actualizado');
+        } catch (\Exception $e) {
+            Log::error('Error al actualizar checkin: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'No se pudo actualizar el Check-In: ' . $e->getMessage());
         }
-
-        $checkin->update([
-            'idCliente' => $cliente->idCliente,
-            'idHabitacion' => $request->habitacion_id,
-            'fechaEntrada' => $request->fecha_entrada,
-        ]);
-
-        return redirect()->back()->with('success', 'Check-In actualizado');
     }
 
     public function destroy($id)
     {
-        $checkin = Checkin::findOrFail($id);
-        $checkin->delete();
+        try {
+            DB::transaction(function () use ($id) {
+                $checkin = Checkin::findOrFail($id);
 
-        Habitacion::where('idHabitacion', $checkin->idHabitacion)
-            ->update(['estado' => 'Disponible']);
+                // Liberar habitación
+                Habitacion::where('idHabitacion', $checkin->idHabitacion)
+                    ->update(['estado' => 'Disponible']);
 
-        return redirect()->back()->with('success', 'Check-In eliminado');
+                $checkin->delete();
+            });
+
+            return redirect()->back()->with('success', 'Check-In eliminado');
+        } catch (\Exception $e) {
+            Log::error('Error al eliminar checkin: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'No se pudo eliminar el Check-In: ' . $e->getMessage());
+        }
     }
 }

@@ -81,7 +81,7 @@
                 <th>#</th>
                 <th>Número</th>
                 <th>Tipo</th>
-                <th>Precio</th>
+                <th>Precio(por 24h)</th>
                 <th>Estado</th>
                 <th>Acciones</th>
             </tr>
