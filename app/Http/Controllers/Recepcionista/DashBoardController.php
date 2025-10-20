@@ -4,35 +4,48 @@ namespace App\Http\Controllers\Recepcionista;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Habitacion;
-use App\Models\Admin\Cliente;
 
-class DashBoardController extends Controller
+class DashboardController extends Controller
 {
     public function index()
     {
-        $habitaciones = Habitacion::all(); // ← corregido: clase con mayúscula
-        $clientes = Cliente::all();        // ← corregido: clase con mayúscula
-
-        $ocupadas = [];
-
-        foreach ($habitaciones as $h) {
-            // Buscar cliente asociado si la habitación está ocupada
+        $habitaciones = Habitacion::with([
+            'checkin.cliente',
+            'reserva.cliente'
+        ])->get()->map(function ($h) {
             $cliente = null;
-            if ($h->estado === 'No disponible') {
-                // Puedes ajustar esta lógica si tienes una relación directa
-                $cliente = $clientes->firstWhere('habitacion_id', $h->id);
+            $modo = 'Disponible';
+
+            // Estado base desde la tabla habitacion
+            $estado = $h->estado;
+
+            if ($estado === 'No disponible') {
+                // Revisar primero check-in activo/activa
+                if ($h->checkin && in_array(strtolower($h->checkin->estado), ['activo', 'activa'])) {
+                    $cliente = $h->checkin->cliente;
+                    $modo = 'Ocupada por check-in';
+                }
+                // Si no hay check-in, revisar reserva confirmada
+                elseif ($h->reserva && strtolower($h->reserva->estado) === 'confirmada') {
+                    $cliente = $h->reserva->cliente;
+                    $modo = 'Ocupada por reserva';
+                } else {
+                    $modo = 'Ocupada (sin detalle)';
+                }
             }
 
-            $ocupadas[] = [
-                'numero' => $h->numero,
-                'estado' => $h->estado,
-                'tipo' => $h->tipoHabitacion ?? 'Sin tipo',
-                'cliente' => $cliente ? $cliente->nombre . ' ' . $cliente->apellido : '—',
+            return [
+                'numero'   => $h->numero,
+                'estado'   => $estado,
+                'tipo'     => $h->tipoHabitacion ?? 'Sin tipo',
+                'cliente'  => $cliente ? $cliente->nombre . ' ' . $cliente->apellido : '—',
                 'telefono' => $cliente ? $cliente->telefono : '—',
-                'modo' => $h->estado === 'No disponible' ? 'No disponible' : 'Disponible'
+                'modo'     => $modo
             ];
-        }
+        });
 
-        return view('recepcionista.dashboard', compact('ocupadas'));
+        return view('recepcionista.dashboard', ['ocupadas' => $habitaciones]);
+
     }
 }
+

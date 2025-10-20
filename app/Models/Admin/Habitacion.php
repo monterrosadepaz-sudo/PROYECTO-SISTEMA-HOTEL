@@ -5,6 +5,9 @@ namespace App\Models\Admin;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use App\Models\Admin\Reserva;
+use App\Models\Recepcionista\Checkin;   
 
 class Habitacion extends Model
 {
@@ -20,30 +23,47 @@ class Habitacion extends Model
         'capacidad',
         'estado',
         'notas',
-        'precio', // ← ya existe en la tabla
+        'precio',
     ];
 
+    // Relaciones
     public function reservas(): HasMany
     {
         return $this->hasMany(Reserva::class, 'idHabitacion');
     }
 
-    public function estaDisponible(): bool
+    public function reserva(): HasOne
     {
-        return Str::lower((string) $this->estado) === 'disponible';
+        return $this->hasOne(Reserva::class, 'idHabitacion')->where('estado', 'confirmada');
     }
 
-    public function actualizarEstadoDesdeReservas(): void
+    public function checkin(): HasOne
     {
-        $tieneReservaActiva = $this->reservas()->where('estado', 'activa')->exists();
-        $this->estado = $tieneReservaActiva ? 'Ocupada' : 'Disponible';
-        $this->save();
+        return $this->hasOne(Checkin::class, 'idHabitacion')->where('estado', 'activa');
     }
-    
+
+    // Métodos de estado
+    public function estaDisponible(): bool
+    {
+        return !$this->checkin && !$this->reserva;
+    }
+
+    public function modoOcupacion(): ?string
+    {
+        if ($this->checkin) {
+            return 'Ocupada por check-in';
+        }
+
+        if ($this->reserva) {
+            return 'Ocupada por reserva';
+        }
+
+        return null;
+    }
+
     public function actualizarEstado(): void
     {
-        $tieneReservaActiva = $this->reservas()->where('estado', 'activa')->exists();
-        $this->estado = $tieneReservaActiva ? 'No disponible' : 'Disponible';
+        $this->estado = $this->estaDisponible() ? 'Disponible' : 'No disponible';
         $this->save();
-}
+    }
 }

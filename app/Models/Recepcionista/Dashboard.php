@@ -1,34 +1,20 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Recepcionista;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Admin\Habitacion;
 
-class Dashboard extends Model
+class Dashboard
 {
-    protected $table = 'dashboard'; // si decides crear una tabla futura
-
-    protected $fillable = [
-        'idHabitacion',
-        'idCliente',
-        'modo', // 'Check-In' o 'Reserva'
-        'fechaEvento',
-        'estadoHabitacion',
-        'tipoHabitacion',
-        'nombreCliente',
-        'telefonoCliente'
-    ];
-
-    public $timestamps = false; // si no usas created_at / updated_at
-
-    // Relaciones opcionales
-    public function habitacion()
+    /**
+     * Devuelve la colección de habitaciones con sus relaciones
+     * y atributos listos para el dashboard.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public static function obtenerEstadoHabitaciones()
     {
-        return $this->belongsTo(\App\Models\Admin\Habitacion::class, 'idHabitacion');
-    }
-
-    public function cliente()
-    {
-        return $this->belongsTo(\App\Models\Admin\Cliente::class, 'idCliente');
+        return Habitacion::with(['checkin.cliente', 'reserva.cliente'])->get();
     }
 }
+
