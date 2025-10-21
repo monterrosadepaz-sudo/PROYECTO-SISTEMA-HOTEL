@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Admin\Reserva;
 use App\Models\Recepcionista\Checkin;
 
+
 class Checkout extends Model
 {
     protected $table = 'checkout';
@@ -21,13 +22,13 @@ class Checkout extends Model
         'totalEstadia',
         'totalConsumos',
         'estado',
+       
     ];
 
     protected $casts = [
         'fechaSalida'   => 'date',
         'totalEstadia'  => 'decimal:2',
         'totalConsumos' => 'decimal:2',
-        
     ];
 
     /**
@@ -47,6 +48,11 @@ class Checkout extends Model
     }
 
     /**
+     * Relación con el empleado (recepcionista) que registró el checkout
+     */
+  
+
+    /**
      * Accesor para mostrar resumen financiero
      */
     public function getResumenPagoAttribute(): string
@@ -58,4 +64,5 @@ class Checkout extends Model
                ', Consumos: $' . number_format($this->totalConsumos ?? 0, 2) . ')';
     }
 }
+
 

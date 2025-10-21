@@ -14,7 +14,7 @@
                     <div class="mb-3">
                         <label for="nombre" class="form-label">Nombre de Usuario</label>
                         <input type="text" name="nombre" id="nombre" class="form-control"
-                               placeholder="Ej. alberto" value="{{ old('nombre') }}" required>
+                               placeholder="ingrese su usuario" value="{{ old('nombre') }}" required>
                     </div>
 
                     <div class="mb-3">

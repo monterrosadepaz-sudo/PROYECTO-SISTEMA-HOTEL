@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use App\Models\Recepcionista\Checkout;
 use App\Models\Admin\Cliente;
 use App\Models\Admin\Habitacion;
-
+use App\Models\Admin\Reserva;
 class Checkin extends Model
 {
     protected $table = 'checkin';
@@ -48,5 +48,10 @@ class Checkin extends Model
             $this->habitacion->update(['estado' => 'Disponible']);
         }
     }
+
+    public function reserva(): BelongsTo
+    {
+        return $this->belongsTo(Reserva::class, 'idReserva', 'idReserva');
+    }   
 }
 

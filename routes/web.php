@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\DashboardController;
 
 use App\Http\Controllers\Admin\ProductoController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\Admin\ReporteClienteController;    
 
 use App\Http\Controllers\Recepcionista\CheckinController;
 use App\Http\Controllers\Recepcionista\ReservaController;
@@ -57,6 +58,10 @@ Route::prefix('admin')->group(function () {
     Route::delete('/productos/{idProducto}', [ProductoController::class, 'destroy'])->name('productos.destroy');
     Route::delete('/productos/{idProducto}/eliminar', [ProductoController::class, 'eliminarDefinitivo'])->name('productos.eliminarDefinitivo');
     Route::put('/productos/{idProducto}/reactivar', [ProductoController::class, 'reactivar'])->name('productos.reactivar');
+
+    // Reporte de Clientes Históricos
+    Route::get('/admin/reportes/clientes', [ReporteClienteController::class, 'index'])->name('admin.reportes.clientes');
+    Route::get('/admin/reportes/clientes/pdf', [ReporteClienteController::class, 'generarPDF'])->name('admin.reporte.clientes.pdf');
 });
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//

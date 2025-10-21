@@ -11,34 +11,40 @@ return new class extends Migration
      */
     public function up(): void
     {
-           Schema::create('venta', function (Blueprint $table) {
-    // PK autoincremental
+       Schema::create('venta', function (Blueprint $table) {
     $table->bigIncrements('idVenta');
 
-    // FKs y campos
-    $table->char('idReserva', 36);
+    // Reserva usa UUID (char 36)
+    $table->char('idReserva', 36)->nullable();
+    $table->foreign('idReserva')
+          ->references('idReserva')->on('reserva')
+          ->onDelete('cascade');
+
+    // Checkin usa BIGINT
+    $table->unsignedBigInteger('idCheckin')->nullable();
+    $table->foreign('idCheckin')
+          ->references('idCheckin')->on('checkin')
+          ->onDelete('cascade');
+
+    // Producto (asumo UUID también)
     $table->char('idProducto', 36);
-    $table->char('idEmpleado', 36)->nullable(); // lo dejamos nullable si no lo llenas aún
+    $table->foreign('idProducto')
+          ->references('idProducto')->on('producto')
+          ->onDelete('cascade');
 
     $table->integer('cantidad')->default(1);
     $table->decimal('monto', 10, 2);
     $table->date('fecha');
     $table->timestamps();
+});
 
-    $table->foreign('idReserva')->references('idReserva')->on('reserva')->onDelete('cascade');
-    $table->foreign('idProducto')->references('idProducto')->on('producto')->onDelete('cascade');
-    $table->foreign('idEmpleado')->references('idEmpleado')->on('empleado')->onDelete('set null');
-
-
-    });
     }
 
     /**
      * Reverse the migrations.
      */
-   public function down(): void
-        {
-    Schema::dropIfExists('venta');
+    public function down(): void
+    {
+        Schema::dropIfExists('venta');
     }
-
 };

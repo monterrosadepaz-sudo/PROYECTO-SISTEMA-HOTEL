@@ -22,10 +22,13 @@
     </div>
     <div class="col-md-4">
         <div class="card shadow text-center p-3" id="cardReporteClientes">
-            <h5>Clientes</h5>
-            <p>Historial de huéspedes</p>
-            <button type="button" id="btnGenerarReporteClientes" name="btnGenerarReporteClientes" class="btn btn-dark">Generar</button>
-        </div>
+        <h5>Clientes</h5>
+        <p>Historial de huéspedes</p>
+        <a href="{{ route('admin.reportes.clientes') }}" class="btn btn-dark">
+         Generar
+        </a>
+    </div>
+
     </div>
 </div>
 @endsection

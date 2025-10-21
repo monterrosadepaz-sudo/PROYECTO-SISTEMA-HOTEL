@@ -6,13 +6,7 @@
 <h2 class="mb-4">Bienvenido, Administrador</h2>
 
 <div class="row g-3">
-    <div class="col-md-3">
-        <div class="card shadow text-center p-3" id="cardReservas">
-            <h5>Reservas</h5>
-            <p>Gestiona todas las reservas</p>
-            <a href="{{ url('/admin/reservas') }}" id="btnIrReservas" class="btn btn-sm btn-dark">Ir</a>
-        </div>
-    </div>
+    
     <div class="col-md-3">
         <div class="card shadow text-center p-3" id="cardHabitaciones">
             <h5>Habitaciones</h5>
@@ -20,13 +14,7 @@
             <a href="{{ url('/admin/habitaciones') }}" id="btnIrHabitaciones" class="btn btn-sm btn-dark">Ir</a>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card shadow text-center p-3" id="cardClientes">
-            <h5>Clientes</h5>
-            <p>Lista de huéspedes</p>
-            <a href="{{ url('/admin/clientes') }}" id="btnIrClientes" class="btn btn-sm btn-dark">Ir</a>
-        </div>
-    </div>
+    
     <div class="col-md-3">
         <div class="card shadow text-center p-3" id="cardReportes">
             <h5>Reportes</h5>

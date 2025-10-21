@@ -9,7 +9,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
         <div class="container">
-            <a class="navbar-brand" href="#">Hotel XYZ</a>
+            <a class="navbar-brand" href="#">Hotel MEGATEC</a>
             <div>
                 <a href="/" class="btn btn-outline-light btn-sm">Salir</a>
             </div>

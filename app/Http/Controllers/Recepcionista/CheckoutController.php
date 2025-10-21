@@ -11,7 +11,6 @@ use App\Models\Recepcionista\Checkout;
 use App\Models\Admin\Producto;
 use App\Models\Recepcionista\Venta;
 use Carbon\Carbon;
-use Illuminate\Support\Str;
 
 class CheckoutController extends Controller
 {
@@ -35,7 +34,7 @@ class CheckoutController extends Controller
     // Registrar salida de una reserva confirmada
     public function registrarSalida(Request $request, $idReserva)
     {
-        $reserva = Reserva::with(['habitacion', 'ventas.producto'])->findOrFail($idReserva);
+        $reserva = Reserva::with(['cliente', 'habitacion', 'ventas.producto'])->findOrFail($idReserva);
 
         // Calcular duración en días (precio es por día)
         $entrada = Carbon::parse($reserva->fechaEntrada);
@@ -60,8 +59,6 @@ class CheckoutController extends Controller
                         'cantidad'   => 1,
                         'monto'      => $producto->precio,
                         'fecha'      => now()->toDateString(),
-                        //'metodo'     => 'pendiente',
-                        //'referencia' => 'checkout-auto',
                     ]);
                 }
             }
@@ -69,6 +66,7 @@ class CheckoutController extends Controller
 
         // Registrar en tabla checkout
         Checkout::create([
+            'idReserva'     => $reserva->idReserva,
             'fechaSalida'   => now(),
             'totalEstadia'  => $totalEstadia,
             'totalConsumos' => $totalConsumos,
@@ -83,6 +81,11 @@ class CheckoutController extends Controller
             $reserva->habitacion->save();
         }
 
+        // Eliminar cliente activo (ya está en cliente_historial)
+        if ($reserva->cliente) {
+            $reserva->cliente->delete();
+        }
+
         return redirect()->route('checkout.index')
             ->with('success', 'Salida de reserva registrada correctamente.');
     }
@@ -90,7 +93,7 @@ class CheckoutController extends Controller
     // Registrar salida de un check-in activo
     public function registrarCheckin(Request $request, $idCheckin)
     {
-        $checkin = Checkin::with(['habitacion', 'reserva'])->findOrFail($idCheckin);
+        $checkin = Checkin::with(['cliente', 'habitacion', 'reserva'])->findOrFail($idCheckin);
 
         // Calcular duración en días desde la fecha de entrada hasta ahora
         $entrada = Carbon::parse($checkin->fechaEntrada);
@@ -110,13 +113,11 @@ class CheckoutController extends Controller
                     $totalConsumos += $producto->precio;
 
                     Venta::create([
-                        'idReserva'  => $checkin->idReserva,
+                        'idCheckin'  => $checkin->idCheckin,
                         'idProducto' => $producto->idProducto,
                         'cantidad'   => 1,
                         'monto'      => $producto->precio,
                         'fecha'      => now()->toDateString(),
-                        //'metodo'     => 'pendiente',
-                        //'referencia' => 'checkout-auto',
                     ]);
                 }
             }
@@ -124,6 +125,7 @@ class CheckoutController extends Controller
 
         // Registrar en tabla checkout
         Checkout::create([
+            'idCheckin'     => $checkin->idCheckin,
             'fechaSalida'   => now(),
             'totalEstadia'  => $totalEstadia,
             'totalConsumos' => $totalConsumos,
@@ -136,6 +138,11 @@ class CheckoutController extends Controller
         if ($checkin->habitacion) {
             $checkin->habitacion->estado = 'Disponible';
             $checkin->habitacion->save();
+        }
+
+        // Eliminar cliente activo (ya está en cliente_historial)
+        if ($checkin->cliente) {
+            $checkin->cliente->delete();
         }
 
         return redirect()->route('checkout.index')

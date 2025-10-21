@@ -31,7 +31,7 @@
                 <span class="badge bg-warning cronometro-reserva"
                       data-fecha="{{ $reserva->fechaSalida }}"></span>
             </p>
-
+    
             <h6>Consumos registrados</h6>
             @if($reserva->ventas->isEmpty())
                 <p class="text-muted">No hay productos o servicios registrados.</p>

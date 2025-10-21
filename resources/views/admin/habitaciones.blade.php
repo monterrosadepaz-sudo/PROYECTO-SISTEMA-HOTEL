@@ -10,12 +10,6 @@
     <div class="alert alert-success">{{ session('mensaje') }}</div>
 @endif
 
-{{-- Referencia al control de estado por recepcionista --}}
-<div class="mb-3">
-    <a href="#" class="btn btn-outline-info btn-sm">
-        Ver control de habitaciones (Recepcionista)
-    </a>
-</div>
 
 {{-- Formulario para crear o editar habitación --}}
 <div class="card shadow" id="seccionFormularioHabitacion">
