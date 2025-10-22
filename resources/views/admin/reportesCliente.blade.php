@@ -3,11 +3,11 @@
 @section('contenido')
 <div class="container">
     <div class="text-center mb-4">
-        <h2 class="fw-bold">🏨 Hotel MEGATEC</h2>
-        <h4 class="text-secondary">📋 Reporte de Clientes Históricos</h4>
+        <h2 class="fw-bold"> Hotel MEGATEC</h2>
+        <h4 class="text-secondary">Reporte de Clientes Históricos</h4>
         <p class="text-muted">Generado el {{ \Carbon\Carbon::now()->format('d/m/Y H:i') }}</p>
         <a href="{{ route('admin.reporte.clientes.pdf') }}" class="btn btn-outline-danger mt-2">
-            🧾 Descargar PDF
+            Descargar PDF
         </a>
     </div>
 

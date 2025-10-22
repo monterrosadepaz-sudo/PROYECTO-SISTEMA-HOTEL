@@ -68,7 +68,6 @@
             </form>
         </div>
     </div>
-//------------------------------------
 
     {{-- Tabla de Check-Ins registrados --}}
     <div class="card">

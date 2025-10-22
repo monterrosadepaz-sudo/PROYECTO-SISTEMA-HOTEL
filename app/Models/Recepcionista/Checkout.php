@@ -2,67 +2,42 @@
 
 namespace App\Models\Recepcionista;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Models\Admin\Reserva;
-use App\Models\Recepcionista\Checkin;
 
+use Illuminate\Database\Eloquent\Model;
 
 class Checkout extends Model
 {
     protected $table = 'checkout';
     protected $primaryKey = 'idCheckout';
-    public $incrementing = true;
-    protected $keyType = 'int';
 
     protected $fillable = [
-        'idCheckin',
         'idReserva',
+        'idCheckin',
+        'tipo',
+        'idClienteHistorial',
+        'nombreCliente',
+        'telefonoCliente',
+        'documentoCliente',
+        'idHabitacion',
+        'numeroHabitacion',
+        'tipoHabitacion',
+        'precioPorDia',
+        'fechaEntrada',
         'fechaSalida',
+        'diasEstadia',
         'totalEstadia',
         'totalConsumos',
-        'estado',
-       
+        'totalGeneral',
+        'detalleConsumos',
+        'registradoPor',
     ];
 
     protected $casts = [
-        'fechaSalida'   => 'date',
-        'totalEstadia'  => 'decimal:2',
-        'totalConsumos' => 'decimal:2',
+        'detalleConsumos' => 'array',
+        'fechaEntrada'    => 'date',
+        'fechaSalida'     => 'date',
     ];
-
-    /**
-     * Relación con la reserva asociada
-     */
-    public function reserva(): BelongsTo
-    {
-        return $this->belongsTo(Reserva::class, 'idReserva', 'idReserva');
-    }
-
-    /**
-     * Relación con el checkin asociado (si aplica)
-     */
-    public function checkin(): BelongsTo
-    {
-        return $this->belongsTo(Checkin::class, 'idCheckin', 'idCheckin');
-    }
-
-    /**
-     * Relación con el empleado (recepcionista) que registró el checkout
-     */
-  
-
-    /**
-     * Accesor para mostrar resumen financiero
-     */
-    public function getResumenPagoAttribute(): string
-    {
-        $totalFinal = ($this->totalEstadia ?? 0) + ($this->totalConsumos ?? 0);
-
-        return '$' . number_format($totalFinal, 2) .
-               ' (Estadía: $' . number_format($this->totalEstadia ?? 0, 2) .
-               ', Consumos: $' . number_format($this->totalConsumos ?? 0, 2) . ')';
-    }
 }
+
 
 

@@ -6,42 +6,52 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('checkout', function (Blueprint $table) {
-            $table->id('idCheckout'); // PK autoincremental
+            $table->bigIncrements('idCheckout');
 
-            // Relación con checkin (opcional)
+            // Identificación de la estadía
+            $table->uuid('idReserva')->nullable();
             $table->unsignedBigInteger('idCheckin')->nullable();
+            $table->enum('tipo', ['reserva', 'checkin'])->nullable();
 
-            // Relación con reserva (opcional)
-            $table->char('idReserva', 36)->nullable();
+            // Cliente (snapshot)
+            $table->unsignedBigInteger('idClienteHistorial')->nullable();
+            $table->string('nombreCliente')->nullable();
+            $table->string('telefonoCliente')->nullable();
+            $table->string('documentoCliente')->nullable();
 
-            $table->date('fechaSalida');
-            $table->decimal('totalEstadia', 10, 2)->default(0);
-            $table->decimal('totalConsumos', 10, 2)->default(0);
-            $table->string('estado')->default('Finalizado');
+            // Habitación (snapshot)
+            $table->unsignedBigInteger('idHabitacion')->nullable();
+            $table->string('numeroHabitacion')->nullable();
+            $table->string('tipoHabitacion')->nullable();
+            $table->decimal('precioPorDia', 10, 2)->nullable();
+
+            // Fechas
+            $table->date('fechaEntrada')->nullable();
+            $table->date('fechaSalida')->nullable();
+            $table->integer('diasEstadia')->nullable();
+
+            // Consumos y totales
+            $table->decimal('totalEstadia', 10, 2)->nullable();
+            $table->decimal('totalConsumos', 10, 2)->nullable();
+            $table->decimal('totalGeneral', 10, 2)->nullable();
+
+            // Detalle de consumos (JSON opcional)
+            $table->json('detalleConsumos')->nullable();
+
+            // Metadatos
+            $table->unsignedBigInteger('registradoPor')->nullable(); // recepcionista
             $table->timestamps();
 
-            // Claves foráneas
-            $table->foreign('idCheckin')
-                  ->references('idCheckin')
-                  ->on('checkin')
-                  ->onDelete('cascade');
-
-            $table->foreign('idReserva')
-                  ->references('idReserva')
-                  ->on('reserva')
-                  ->onDelete('cascade');
+            // Índices
+            $table->index('idReserva');
+            $table->index('idCheckin');
+            $table->index('idClienteHistorial');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('checkout');

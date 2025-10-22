@@ -7,7 +7,9 @@ use App\Http\Controllers\Admin\DashboardController;
 
 use App\Http\Controllers\Admin\ProductoController;
 use App\Http\Controllers\LoginController;
-use App\Http\Controllers\Admin\ReporteClienteController;    
+use App\Http\Controllers\Admin\ReporteClienteController;  
+use App\Http\Controllers\Admin\ReporteHabitacionesController;
+use App\Http\Controllers\Admin\ReporteIngresosController;  
 
 use App\Http\Controllers\Recepcionista\CheckinController;
 use App\Http\Controllers\Recepcionista\ReservaController;
@@ -62,6 +64,14 @@ Route::prefix('admin')->group(function () {
     // Reporte de Clientes Históricos
     Route::get('/admin/reportes/clientes', [ReporteClienteController::class, 'index'])->name('admin.reportes.clientes');
     Route::get('/admin/reportes/clientes/pdf', [ReporteClienteController::class, 'generarPDF'])->name('admin.reporte.clientes.pdf');
+
+    // Reporte de Ingresos
+    Route::get('/reportes/ingresos', [App\Http\Controllers\Admin\ReporteIngresosController::class, 'index'])->name('admin.reporte.ingresos');
+    Route::get('/reportes/ingresos/pdf', [App\Http\Controllers\Admin\ReporteIngresosController::class, 'exportarPdf'])->name('admin.reporte.ingresos.pdf');
+
+    // Reporte de Habitaciones
+        Route::get('/reportes/habitaciones', [ReporteHabitacionesController::class, 'index'])->name('reporte.habitaciones');
+        Route::get('/reportes/habitaciones/pdf', [ReporteHabitacionesController::class, 'exportarPdf']) ->name('reporte.habitaciones.pdf');
 });
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//

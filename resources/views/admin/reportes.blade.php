@@ -10,14 +10,19 @@
         <div class="card shadow text-center p-3" id="cardReporteOcupacion">
             <h5>Ocupación</h5>
             <p>Ver ocupación de habitaciones</p>
-            <button type="button" id="btnGenerarReporteOcupacion" name="btnGenerarReporteOcupacion" class="btn btn-dark">Generar</button>
+            <a href="{{ route('reporte.habitaciones') }}" class="btn btn-dark">
+                Generar
+            </a>
         </div>
     </div>
     <div class="col-md-4">
         <div class="card shadow text-center p-3" id="cardReporteIngresos">
             <h5>Ingresos</h5>
             <p>Reporte de ingresos por reservas</p>
-            <button type="button" id="btnGenerarReporteIngresos" name="btnGenerarReporteIngresos" class="btn btn-dark">Generar</button>
+            <a href="{{ route('admin.reporte.ingresos') }}"  
+                class="btn btn-dark">
+                Generar
+            </a>
         </div>
     </div>
     <div class="col-md-4">

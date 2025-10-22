@@ -21,7 +21,7 @@ class CheckoutController extends Controller
             ->with(['cliente', 'habitacion', 'ventas.producto'])
             ->get();
 
-        $checkins = Checkin::with(['cliente', 'habitacion'])
+        $checkins = Checkin::with(['cliente', 'habitacion', 'reserva.ventas.producto'])
             ->where('estado', 'activa')
             ->orderByDesc('created_at')
             ->get();
@@ -39,12 +39,12 @@ class CheckoutController extends Controller
         // Calcular duración en días (precio es por día)
         $entrada = Carbon::parse($reserva->fechaEntrada);
         $salida = Carbon::parse($reserva->fechaSalida);
-        $dias = max($entrada->diffInDays($salida), 1); // mínimo 1 día
+        $dias = max($entrada->diffInDays($salida), 1);
         $precioPorDia = $reserva->habitacion->precio ?? 0;
         $totalEstadia = $precioPorDia * $dias;
 
         // Calcular consumos ya registrados
-        $totalConsumos = $reserva->ventas->sum(fn($venta) => $venta->producto->precio ?? 0);
+        $totalConsumos = $reserva->ventas->sum(fn($venta) => $venta->monto ?? 0);
 
         // Registrar consumos adicionales seleccionados
         if ($request->has('productos')) {
@@ -64,12 +64,35 @@ class CheckoutController extends Controller
             }
         }
 
-        // Registrar en tabla checkout
+        // Preparar detalle de consumos
+        $detalleConsumos = $reserva->ventas->map(function ($venta) {
+            return [
+                'producto' => $venta->producto->nombre,
+                'cantidad' => $venta->cantidad,
+                'monto'    => $venta->monto,
+            ];
+        });
+
+        // Registrar en tabla checkout (snapshot integral)
         Checkout::create([
-            'idReserva'     => $reserva->idReserva,
-            'fechaSalida'   => now(),
-            'totalEstadia'  => $totalEstadia,
-            'totalConsumos' => $totalConsumos,
+            'idReserva'        => $reserva->idReserva,
+            'tipo'             => 'reserva',
+            'idClienteHistorial' => $reserva->cliente->idClienteHistorial ?? null,
+            'nombreCliente'    => $reserva->cliente->nombre ?? null,
+            'telefonoCliente'  => $reserva->cliente->telefono ?? null,
+            'documentoCliente' => $reserva->cliente->documento ?? null,
+            // 'idHabitacion'   => $reserva->habitacion->idHabitacion ?? null, // ❌ ignorado
+            'numeroHabitacion' => $reserva->habitacion->numero ?? null,
+            'tipoHabitacion'   => $reserva->habitacion->tipo ?? null,
+            'precioPorDia'     => $precioPorDia,
+            'fechaEntrada'     => $entrada,
+            'fechaSalida'      => now(),
+            'diasEstadia'      => $dias,
+            'totalEstadia'     => $totalEstadia,
+            'totalConsumos'    => $totalConsumos,
+            'totalGeneral'     => $totalEstadia + $totalConsumos,
+            'detalleConsumos'  => $detalleConsumos,
+            'registradoPor'    => auth()->id(),
         ]);
 
         // Finalizar reserva y liberar habitación
@@ -81,9 +104,9 @@ class CheckoutController extends Controller
             $reserva->habitacion->save();
         }
 
-        // Eliminar cliente activo (ya está en cliente_historial)
+        // Ya no borramos cliente, solo lo dejamos inactivo
         if ($reserva->cliente) {
-            $reserva->cliente->delete();
+            $reserva->cliente->update(['estado' => 'inactivo']);
         }
 
         return redirect()->route('checkout.index')
@@ -93,7 +116,7 @@ class CheckoutController extends Controller
     // Registrar salida de un check-in activo
     public function registrarCheckin(Request $request, $idCheckin)
     {
-        $checkin = Checkin::with(['cliente', 'habitacion', 'reserva'])->findOrFail($idCheckin);
+        $checkin = Checkin::with(['cliente', 'habitacion', 'reserva.ventas.producto'])->findOrFail($idCheckin);
 
         // Calcular duración en días desde la fecha de entrada hasta ahora
         $entrada = Carbon::parse($checkin->fechaEntrada);
@@ -103,7 +126,7 @@ class CheckoutController extends Controller
         $totalEstadia = $precioPorDia * $dias;
 
         // Calcular consumos asociados a la reserva
-        $totalConsumos = $checkin->reserva?->ventas->sum(fn($venta) => $venta->producto->precio ?? 0) ?? 0;
+        $totalConsumos = $checkin->reserva?->ventas->sum(fn($venta) => $venta->monto ?? 0) ?? 0;
 
         // Registrar consumos adicionales seleccionados
         if ($request->has('productos')) {
@@ -123,12 +146,35 @@ class CheckoutController extends Controller
             }
         }
 
-        // Registrar en tabla checkout
+        // Preparar detalle de consumos
+        $detalleConsumos = $checkin->reserva?->ventas->map(function ($venta) {
+            return [
+                'producto' => $venta->producto->nombre,
+                'cantidad' => $venta->cantidad,
+                'monto'    => $venta->monto,
+            ];
+        });
+
+        // Registrar en tabla checkout (snapshot integral)
         Checkout::create([
-            'idCheckin'     => $checkin->idCheckin,
-            'fechaSalida'   => now(),
-            'totalEstadia'  => $totalEstadia,
-            'totalConsumos' => $totalConsumos,
+            'idCheckin'       => $checkin->idCheckin,
+            'tipo'            => 'checkin',
+            'idClienteHistorial' => $checkin->cliente->idClienteHistorial ?? null,
+            'nombreCliente'   => $checkin->cliente->nombre ?? null,
+            'telefonoCliente' => $checkin->cliente->telefono ?? null,
+            'documentoCliente'=> $checkin->cliente->documento ?? null,
+            // 'idHabitacion'  => $checkin->habitacion->idHabitacion ?? null, // ❌ ignorado
+            'numeroHabitacion'=> $checkin->habitacion->numero ?? null,
+            'tipoHabitacion'  => $checkin->habitacion->tipo ?? null,
+            'precioPorDia'    => $precioPorDia,
+            'fechaEntrada'    => $entrada,
+            'fechaSalida'     => $salida,
+            'diasEstadia'     => $dias,
+            'totalEstadia'    => $totalEstadia,
+            'totalConsumos'   => $totalConsumos,
+            'totalGeneral'    => $totalEstadia + $totalConsumos,
+            'detalleConsumos' => $detalleConsumos,
+            'registradoPor'   => auth()->id(),
         ]);
 
         // Finalizar check-in y liberar habitación
@@ -140,9 +186,9 @@ class CheckoutController extends Controller
             $checkin->habitacion->save();
         }
 
-        // Eliminar cliente activo (ya está en cliente_historial)
+        // Ya no borramos cliente, solo lo dejamos inactivo
         if ($checkin->cliente) {
-            $checkin->cliente->delete();
+            $checkin->cliente->update(['estado' => 'inactivo']);
         }
 
         return redirect()->route('checkout.index')
