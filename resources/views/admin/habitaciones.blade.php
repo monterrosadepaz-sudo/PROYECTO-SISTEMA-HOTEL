@@ -11,7 +11,7 @@
 @endif
 
 
-{{-- Formulario para crear o editar habitación --}}
+
 <div class="card shadow" id="seccionFormularioHabitacion">
     <div class="card-header bg-dark text-white">
         {{ isset($habitacion) ? 'Editar Habitación' : 'Nueva Habitación' }}
@@ -40,7 +40,7 @@
     </div>
 
     <div class="col-md-3">
-        <label for="precioHabitacion" class="form-label">Precio</label>
+        <label for="precioHabitacion" class="form-label">Precio(24h)</label>
         <input type="number" name="precioHabitacion" id="precioHabitacion" class="form-control"
                value="{{ old('precioHabitacion', $habitacion->precio ?? '') }}" required>
     </div>
@@ -51,9 +51,9 @@
                value="{{ old('capacidad', $habitacion->capacidad ?? '') }}" min="1" required>
     </div>
 
-    <div class="col-md-12">
-        <label for="notas" class="form-label">Notas</label>
-        <textarea name="notas" id="notas" class="form-control" rows="2">{{ old('notas', $habitacion->notas ?? '') }}</textarea>
+    <div>
+        <br>
+        <br>
     </div>
 
     <div class="col-md-3 d-grid align-self-end">

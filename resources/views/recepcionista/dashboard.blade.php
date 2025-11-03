@@ -2,7 +2,24 @@
 @section('contenido')
 @section('titulo', 'Panel Recepcionista')
 
-<h2 class="mb-4">Bienvenido, Recepcionista</h2>
+<h1>Bienvenido, {{ Auth::user()->nombre }}</h1>
+<br>
+<p id="fecha-hora"></p>
+
+<script>
+    function actualizarFechaHora() {
+        const ahora = new Date();
+        const opciones = { 
+            weekday: 'long', year: 'numeric', month: 'long', 
+            day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' 
+        };
+        document.getElementById('fecha-hora').innerText = 
+            ahora.toLocaleDateString('es-ES', opciones);
+    }
+    setInterval(actualizarFechaHora, 1000);
+    actualizarFechaHora();
+</script>
+<br>
 
 <div class="row g-3">
     <div class="col-md-4">

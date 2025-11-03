@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Historial extends Model
 {
     protected $fillable = [
-        'cliente_id',
+        'idEmpleado',
         'accion',
         'detalle',
         'fecha',
