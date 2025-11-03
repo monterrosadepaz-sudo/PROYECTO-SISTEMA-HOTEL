@@ -5,6 +5,13 @@
 @section('contenido')
 <h3 class="mb-3">Gestión de Clientes</h3>
 
+<div class="mb-3">
+    <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-secondary btn-sm">
+        ← Volver
+    </a>
+</div>
+
+
 <div class="card shadow" id="seccionFormularioCliente">
     <div class="card-header bg-dark text-white">Nuevo Cliente</div>
     <div class="card-body">

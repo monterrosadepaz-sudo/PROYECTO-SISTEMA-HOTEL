@@ -16,6 +16,8 @@ use App\Http\Controllers\Recepcionista\ReservaController;
 use App\Http\Controllers\Recepcionista\CheckoutController;
 use App\Http\Controllers\Recepcionista\DashBoardController as RecepcionistaDashboardController;
 
+use App\Http\Controllers\RescateController;
+
 // Página de inicio que manda al login
 Route::get('/', function () {
     return redirect()->route('login');
@@ -25,6 +27,9 @@ Route::get('/', function () {
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::get('/rescate', [RescateController::class, 'vistaUnica'])->name('login.rescate');
+Route::post('/rescate', [RescateController::class, 'store'])->name('login.rescate.store');
+
 
 // Vistas del administrador
 Route::prefix('admin')->group(function () {

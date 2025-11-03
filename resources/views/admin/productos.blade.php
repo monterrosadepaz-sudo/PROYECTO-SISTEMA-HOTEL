@@ -10,6 +10,12 @@
         <div class="alert alert-success">{{ session('mensaje') }}</div>
     @endif
 
+<div class="mb-3">
+    <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-secondary btn-sm">
+        ← Volver
+    </a>
+</div>
+
     {{-- Formulario de creación (solo si no hay producto seleccionado) --}}
     @if(!isset($producto))
         <h2 class="mb-4">Agregar nuevo producto o servicio</h2>

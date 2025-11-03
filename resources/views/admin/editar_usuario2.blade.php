@@ -5,6 +5,12 @@
 @section('contenido')
 <h3 class="mb-3">Editar Usuario</h3>
 
+<div class="mb-3">
+    <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-secondary btn-sm">
+        ← Volver
+    </a>
+</div>
+
 <div class="card shadow mb-4">
     <div class="card-header bg-warning text-dark">Formulario de Edición</div>
     <div class="card-body">

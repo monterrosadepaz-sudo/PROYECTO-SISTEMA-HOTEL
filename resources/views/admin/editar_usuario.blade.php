@@ -6,6 +6,12 @@
 <h3 class="mb-3">Gestión de Usuarios</h3>
 <p>Total usuarios: {{ count($usuarios) }}</p>
 
+<div class="mb-3">
+    <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-secondary btn-sm">
+        ← Volver
+    </a>
+</div>
+
 
 <div class="card shadow mb-4" id="seccionFormularioUsuario">
     <div class="card-header bg-dark text-white">Nuevo Usuario</div>

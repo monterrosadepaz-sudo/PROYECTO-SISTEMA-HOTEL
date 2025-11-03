@@ -4,6 +4,12 @@
 <div class="container mt-4">
     <h2 class="mb-4">Módulo de Check-In</h2>
 
+    <div class="mb-3">
+    <a href="{{ route('recepcionista.dashboard') }}" class="btn btn-outline-secondary btn-sm">
+        ← Volver
+    </a>
+</div>
+
     @if(session('success'))
         <div class="alert alert-success">
             {{ session('success') }}

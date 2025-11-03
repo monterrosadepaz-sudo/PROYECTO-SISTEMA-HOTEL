@@ -5,6 +5,12 @@
 @section('contenido')
 <h3 class="mb-3">Reportes del Hotel</h3>
 
+<div class="mb-3">
+    <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-secondary btn-sm">
+        ← Volver
+    </a>
+</div>
+
 <div class="row g-3">
     <div class="col-md-4">
         <div class="card shadow text-center p-3" id="cardReporteOcupacion">

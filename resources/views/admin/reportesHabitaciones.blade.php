@@ -4,6 +4,8 @@
 <div class="container-fluid">
     <h1 class="mb-4"> Reporte de Habitaciones</h1>
 
+ 
+
     <div class="d-flex justify-content-between mb-3">
         <div>
             

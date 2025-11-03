@@ -5,6 +5,12 @@
 @section('contenido')
 <h3 class="mb-4">Panel de Check-Out</h3>
 
+ <div class="mb-3">
+    <a href="{{ route('recepcionista.dashboard') }}" class="btn btn-outline-secondary btn-sm">
+        ← Volver
+    </a>
+</div>
+
 {{-- Mensajes --}}
 @if(session('success'))
     <div class="alert alert-success">{{ session('success') }}</div>

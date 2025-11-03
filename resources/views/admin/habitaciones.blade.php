@@ -5,6 +5,12 @@
 @section('contenido')
 <h3 class="mb-3">Gestión de Habitaciones</h3>
 
+<div class="mb-3">
+    <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-secondary btn-sm">
+        ← Volver
+    </a>
+</div>
+
 {{-- Mensaje de confirmación --}}
 @if(session('mensaje'))
     <div class="alert alert-success">{{ session('mensaje') }}</div>

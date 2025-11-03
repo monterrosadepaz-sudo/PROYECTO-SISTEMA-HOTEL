@@ -3,6 +3,13 @@
 @section('titulo', 'Reservas Recepcionista')
 
 @section('contenido')
+
+ <div class="mb-3">
+    <a href="{{ route('recepcionista.dashboard') }}" class="btn btn-outline-secondary btn-sm">
+        ← Volver
+    </a>
+</div>
+
 <div class="container mt-4">
     <h3 class="mb-4">{{ isset($reservaEdit) ? 'Editar Reserva' : 'Registrar nueva Reserva' }}</h3>
 
